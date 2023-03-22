@@ -3,7 +3,6 @@ Class Exercise
 Erika Mehrhoff
 3/17/2023
 
-
 ## Load the libraries you need
 
 ## Load functions you need “my\_class\_functions”
