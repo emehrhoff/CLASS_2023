@@ -2,7 +2,7 @@
 title: "Class Exercise"
 author: "Erika Mehrhoff"
 date: "3/17/2023"
-output: github_document
+output: html_document
 ---
 
 
@@ -71,12 +71,10 @@ exportpath <- file.path(basepath, consensus_path)
 # export each as .bed file
 for(i in 1:length(consensus_list)) {
 rtracklayer::export(consensus_list[[i]], paste0(exportpath, names(consensus_list)[i], "_consensus_peaks.bed") )}
-```
 
-## Now I am going to make my consensus peaks compatable with UCSC genome browser
-```{r}
+# clean up consensus and export
 # file list:
-consensus_file_list <- list.files("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/results/", full.names = T, pattern = ".bed")
+consensus_file_list <- list.files("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/results/", full.names = T, pattern = "*consensus_peaks.bed")
 
 # lapply (for loop) across consensus file list to add colnames
 # The actual col names for .broadPeak are: chr, start, end, name, score, strand
@@ -98,7 +96,10 @@ for(i in 1:length(peaks)) {
               sep = "\t", col.names = FALSE, row.names = FALSE,
               quote = FALSE, append = TRUE) # t for tab separated 
 }
+```
 
+## Now I am going to make my consensus peaks compatable with UCSC genome browser
+```{r}
 # print out consensus peak files in a results/UCSC directory
 # export using naming for ucsc
 headers <- paste0("track type=bedGraph name=", names(peaks)) 
@@ -171,14 +172,16 @@ names(human_tfs) <- c("ensembl_id",
                       "tf")
 
 # merge
-num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T) #
+num_peaks_df2 <- num_peaks_df
+num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T) 
 
 # Let's check how many NAs -- we should have some missing values. 
 dim(num_peaks_df[is.na(num_peaks_df$tf),])
 
 # if you leave the object name you just created in the environment
 # it will print out in the knit
-kableExtra::kbl(num_peaks_df[,1:6], align="c") %>% kableExtra::kable_styling()
+kableExtra::kbl(num_peaks_df2, align="c") %>% kableExtra::kable_styling()
+kableExtra::kbl(num_peaks_df, align="c") %>% kableExtra::kable_styling()
 ```
 
 ## Now I want to compare a protein with a previous analysis 
@@ -186,6 +189,8 @@ kableExtra::kbl(num_peaks_df[,1:6], align="c") %>% kableExtra::kable_styling()
 # go to UCSC genome browser and load in a peak file for a given protein
 # load in the data for the same protein from the previous analysis
 # compare how your consensus peaks are similar or different to previous analyses
+
+# It appears most of the consensus peaks from this analysis match those found in previous analyses. Scrolling across the genome on UCSC genome browser and looking at the peaks it is evident that almost all of them have similar called peaks.
 ```
 
 
@@ -239,11 +244,11 @@ kableExtra::kbl(num_peaks_df, align="c") %>% kableExtra::kable_styling()
 
 ## Results: 
 ## 1) What can you determine from these overlaps?
-### CEBPZ- binds at promoters a lot (124%)
-### CHD2- binds at promoters a lot (92%)
-### CTCF- does not bind at promoters a lot (13%)
-### ELF1- binds at promoters a lot (78%)
-### EP300- does not bind at promoters a lot (12%)
+### CEBPZ binds at promoters a lot (124%)
+### CHD2 binds at promoters a lot (92%)
+### CTCF does not bind at promoters a lot (13%)
+### ELF1 binds at promoters a lot (78%)
+### EP300 does not bind at promoters a lot (12%)
 
 
 ## Now I want to compare the overlaps with lncRNA and mRNA promoters seperately 
@@ -287,7 +292,6 @@ num_peaks_df$peaks_overlapping_mrna_genebody <-
 write_csv(num_peaks_df, "results/num_peaks_df.csv")
 
 kableExtra::kbl(num_peaks_df[,c(1:7,11)], align="c") %>% kableExtra::kable_styling()
-
 ```
 ## Results: 
 ## 1) Do my proteins have more overlaps with promoters or genebodies?
@@ -320,7 +324,7 @@ write_csv(peak_occurence_df, "results/peak_occurence_dataframe.csv")
 
 # summary of number of dbp binding promoter
 sum_tab <- table(peak_occurence_df$number_of_dbp)
-names(dimnames(sum_tab)) <- c("# proteins bound specific promoter")
+names(dimnames(sum_tab)) <- c("Max number of proteins bound specific promoter")
 sum_tab
 ```
 ## Results: I find the max number of proteins on a promoter to be 4.
@@ -363,8 +367,14 @@ ggplot(num_peaks_df, aes(x = num_peaks)) +
 #ggplot(num_peaks_df, aes(x = num_peaks)) +
   #geom_histogram(bins=7) +
   #facet_wrap(~dbd)
-# If you take previous graph and use facet wrap it doesn't look right
-# represent data using bar plot
+# If you take previous graph and facet wrap it by dbp it won't look right because each histogram would only have 1 piece of information.
+# Could represent as histogram that has colored bars for each dbd or a bar plot
+
+ggplot(num_peaks_df, aes(x = num_peaks, fill=dbd)) +
+  geom_histogram(bins=5) +
+  labs(x="Number of Peaks",
+       y="Frequency",
+       title= "Number of Peaks for all the Proteins")
 
 ggplot(num_peaks_df, aes(
       x = dbd,
@@ -373,12 +383,6 @@ ggplot(num_peaks_df, aes(
   labs(x="Type of DNA Binding Protein",
        y="Number of Peaks",
        title= "Number of Peaks by Type of DNA Binding Protein") 
-
-ggplot(num_peaks_df, aes(x = num_peaks, fill=dbd)) +
-  geom_histogram(bins=5) +
-  labs(x="Number of Peaks",
-       y="Frequency",
-       title= "Number of Peaks for all the Proteins")
 ```
 
 
