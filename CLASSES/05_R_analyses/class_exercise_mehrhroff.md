@@ -424,7 +424,6 @@ names(human_tfs) <- c("ensembl_id",
                       "tf")
 
 # merge
-num_peaks_df2 <- num_peaks_df
 num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T) 
 
 # Let's check how many NAs -- we should have some missing values. 
@@ -436,100 +435,6 @@ dim(num_peaks_df[is.na(num_peaks_df$tf),])
 ``` r
 # if you leave the object name you just created in the environment
 # it will print out in the knit
-kableExtra::kbl(num_peaks_df2, align="c") %>% kableExtra::kable_styling()
-```
-
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
-dbp
-</th>
-<th style="text-align:center;">
-num\_peaks
-</th>
-<th style="text-align:center;">
-total\_peak\_length
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-172
-</td>
-<td style="text-align:center;">
-67337
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CHD2
-</td>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-8815
-</td>
-<td style="text-align:center;">
-4519174
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CTCF
-</td>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-28799
-</td>
-<td style="text-align:center;">
-18606505
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ELF1
-</td>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-11874
-</td>
-<td style="text-align:center;">
-7572457
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-EP300
-</td>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-568
-</td>
-<td style="text-align:center;">
-500333
-</td>
-</tr>
-</tbody>
-</table>
-
-``` r
 kableExtra::kbl(num_peaks_df, align="c") %>% kableExtra::kable_styling()
 ```
 
