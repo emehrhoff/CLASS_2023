@@ -1,21 +1,24 @@
-Class Exercise
-================
-Erika Mehrhoff
-3/17/2023
+---
+title: "Class Exercise"
+author: "Erika Mehrhoff"
+date: "3/17/2023"
+output:
+  html_document:
+    keep_md: true
+---
+
 
 ## Load the libraries you need
+## Load functions you need "my_class_functions"
 
-## Load functions you need “my\_class\_functions”
+
 
 ## load in your peak files for each replicate of each protein
-
 ## Here I am starting to analyze my data for my proteins of interest:
-
 ## protein CEBPZ, CHD2, CTCF, ELF1, EP300
-
 ## First I will read in each replicate file
 
-``` r
+```r
 # setting file paths
 basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
 peak_path <- "group/results/bwa/mergedLibrary/macs/broadPeak"
@@ -39,268 +42,131 @@ kableExtra::kbl(peak_num, align="c") %>% kableExtra::kable_styling()
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-dbp
-</th>
-<th style="text-align:center;">
-replicate
-</th>
-<th style="text-align:center;">
-num\_peaks
-</th>
-</tr>
-</thead>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> dbp </th>
+   <th style="text-align:center;"> replicate </th>
+   <th style="text-align:center;"> num_peaks </th>
+  </tr>
+ </thead>
 <tbody>
-<tr>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-R1
-</td>
-<td style="text-align:center;">
-273
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-R2
-</td>
-<td style="text-align:center;">
-402
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-R1
-</td>
-<td style="text-align:center;">
-22119
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-R2
-</td>
-<td style="text-align:center;">
-13012
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R1
-</td>
-<td style="text-align:center;">
-36870
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R2
-</td>
-<td style="text-align:center;">
-65526
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R3
-</td>
-<td style="text-align:center;">
-83141
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R4
-</td>
-<td style="text-align:center;">
-55484
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R5
-</td>
-<td style="text-align:center;">
-52373
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R6
-</td>
-<td style="text-align:center;">
-44241
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R7
-</td>
-<td style="text-align:center;">
-71705
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-R8
-</td>
-<td style="text-align:center;">
-68383
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-R1
-</td>
-<td style="text-align:center;">
-25895
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-R2
-</td>
-<td style="text-align:center;">
-35371
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-R3
-</td>
-<td style="text-align:center;">
-23188
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-R4
-</td>
-<td style="text-align:center;">
-15436
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-R1
-</td>
-<td style="text-align:center;">
-38462
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-R2
-</td>
-<td style="text-align:center;">
-59348
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-R3
-</td>
-<td style="text-align:center;">
-4471
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-R4
-</td>
-<td style="text-align:center;">
-6888
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-R5
-</td>
-<td style="text-align:center;">
-10270
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-R6
-</td>
-<td style="text-align:center;">
-882
-</td>
-</tr>
+  <tr>
+   <td style="text-align:center;"> CEBPZ </td>
+   <td style="text-align:center;"> R1 </td>
+   <td style="text-align:center;"> 273 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CEBPZ </td>
+   <td style="text-align:center;"> R2 </td>
+   <td style="text-align:center;"> 402 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CHD2 </td>
+   <td style="text-align:center;"> R1 </td>
+   <td style="text-align:center;"> 22119 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CHD2 </td>
+   <td style="text-align:center;"> R2 </td>
+   <td style="text-align:center;"> 13012 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R1 </td>
+   <td style="text-align:center;"> 36870 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R2 </td>
+   <td style="text-align:center;"> 65526 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R3 </td>
+   <td style="text-align:center;"> 83141 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R4 </td>
+   <td style="text-align:center;"> 55484 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R5 </td>
+   <td style="text-align:center;"> 52373 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R6 </td>
+   <td style="text-align:center;"> 44241 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R7 </td>
+   <td style="text-align:center;"> 71705 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> R8 </td>
+   <td style="text-align:center;"> 68383 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> R1 </td>
+   <td style="text-align:center;"> 25895 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> R2 </td>
+   <td style="text-align:center;"> 35371 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> R3 </td>
+   <td style="text-align:center;"> 23188 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> R4 </td>
+   <td style="text-align:center;"> 15436 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> R1 </td>
+   <td style="text-align:center;"> 38462 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> R2 </td>
+   <td style="text-align:center;"> 59348 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> R3 </td>
+   <td style="text-align:center;"> 4471 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> R4 </td>
+   <td style="text-align:center;"> 6888 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> R5 </td>
+   <td style="text-align:center;"> 10270 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> R6 </td>
+   <td style="text-align:center;"> 882 </td>
+  </tr>
 </tbody>
 </table>
 
+
 ## Now I am going to create consensus peaks for each protein
 
-``` r
+```r
 # list of unique dbps as input parameter
 dbps <- unique(sapply(names(peak_list), function(x) {
    unlist(strsplit(x, "_"))[1]
@@ -322,7 +188,7 @@ rtracklayer::export(consensus_list[[i]], paste0(exportpath, names(consensus_list
 
 ## Now I am going to make my consensus peaks compatable with UCSC genome browser
 
-``` r
+```r
 # file list:
 consensus_file_list <- list.files("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/results/", full.names = T, pattern = ".bed")
 
@@ -365,7 +231,8 @@ for(i in 1:length(peaks)) {
 
 ## I am curious if my proteins are transcription factors so I will use the annotations in a cell paper I found and see
 
-``` r
+
+```r
 # import consensus bed files
 consensus_path <- "CLASS_2023/CLASSES/05_R_analyses/results/consensus_peaks"
 consensusPeakPath <- file.path(basepath, consensus_path)
@@ -409,9 +276,11 @@ names(human_tfs)[4] <- "is_tf"
 length(which(tolower(num_peaks_df$dbp) %in% tolower(human_tfs$Name))) # 5
 ```
 
-    ## [1] 5
+```
+## [1] 5
+```
 
-``` r
+```r
 # first let's filter and grab the first 4 columns that match DBPs in num_peaks_df
 human_tfs <- human_tfs[tolower(human_tfs$Name) %in% tolower(num_peaks_df$dbp), 1:4]
 # which of 4 mapped to downloaded file 
@@ -429,154 +298,85 @@ num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T) #
 dim(num_peaks_df[is.na(num_peaks_df$tf),])
 ```
 
-    ## [1] 0 6
+```
+## [1] 0 6
+```
 
-``` r
+```r
 # if you leave the object name you just created in the environment
 # it will print out in the knit
 kableExtra::kbl(num_peaks_df[,1:6], align="c") %>% kableExtra::kable_styling()
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-dbp
-</th>
-<th style="text-align:center;">
-num\_peaks
-</th>
-<th style="text-align:center;">
-total\_peak\_length
-</th>
-<th style="text-align:center;">
-ensembl\_id
-</th>
-<th style="text-align:center;">
-dbd
-</th>
-<th style="text-align:center;">
-tf
-</th>
-</tr>
-</thead>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> dbp </th>
+   <th style="text-align:center;"> num_peaks </th>
+   <th style="text-align:center;"> total_peak_length </th>
+   <th style="text-align:center;"> ensembl_id </th>
+   <th style="text-align:center;"> dbd </th>
+   <th style="text-align:center;"> tf </th>
+  </tr>
+ </thead>
 <tbody>
-<tr>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-2924
-</td>
-<td style="text-align:center;">
-1144729
-</td>
-<td style="text-align:center;">
-ENSG00000115816
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-149855
-</td>
-<td style="text-align:center;">
-76825958
-</td>
-<td style="text-align:center;">
-ENSG00000173575
-</td>
-<td style="text-align:center;">
-Myb/SANT
-</td>
-<td style="text-align:center;">
-No
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-489583
-</td>
-<td style="text-align:center;">
-316310585
-</td>
-<td style="text-align:center;">
-ENSG00000102974
-</td>
-<td style="text-align:center;">
-C2H2 ZF
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-201858
-</td>
-<td style="text-align:center;">
-128731769
-</td>
-<td style="text-align:center;">
-ENSG00000120690
-</td>
-<td style="text-align:center;">
-Ets
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-9656
-</td>
-<td style="text-align:center;">
-8505661
-</td>
-<td style="text-align:center;">
-ENSG00000100393
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-No
-</td>
-</tr>
+  <tr>
+   <td style="text-align:center;"> CEBPZ </td>
+   <td style="text-align:center;"> 3268 </td>
+   <td style="text-align:center;"> 1279403 </td>
+   <td style="text-align:center;"> ENSG00000115816 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> Yes </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CHD2 </td>
+   <td style="text-align:center;"> 167485 </td>
+   <td style="text-align:center;"> 85864306 </td>
+   <td style="text-align:center;"> ENSG00000173575 </td>
+   <td style="text-align:center;"> Myb/SANT </td>
+   <td style="text-align:center;"> No </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> 547181 </td>
+   <td style="text-align:center;"> 353523595 </td>
+   <td style="text-align:center;"> ENSG00000102974 </td>
+   <td style="text-align:center;"> C2H2 ZF </td>
+   <td style="text-align:center;"> Yes </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> 225606 </td>
+   <td style="text-align:center;"> 143876683 </td>
+   <td style="text-align:center;"> ENSG00000120690 </td>
+   <td style="text-align:center;"> Ets </td>
+   <td style="text-align:center;"> Yes </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> 10792 </td>
+   <td style="text-align:center;"> 9506327 </td>
+   <td style="text-align:center;"> ENSG00000100393 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> No </td>
+  </tr>
 </tbody>
 </table>
 
-## Now I want to compare a protein with a previous analysis
+## Now I want to compare a protein with a previous analysis 
 
-``` r
+```r
 # go to UCSC genome browser and load in a peak file for a given protein
 # load in the data for the same protein from the previous analysis
 # compare how your consensus peaks are similar or different to previous analyses
 ```
 
-## Now I am going to determine how my peaks for each protein overlap annotations of the genome
 
+## Now I am going to determine how my peaks for each protein overlap annotations of the genome
 ## First I will find the overlaps between my consensus peaks with promoters of lncRNA and mRNA promoters
 
-``` r
+
+```r
 # pulling out annotations
 # all genes
 gencode_genes <- gencode_gr[gencode_gr$type == "gene"] 
@@ -622,185 +422,84 @@ kableExtra::kbl(num_peaks_df, align="c") %>% kableExtra::kable_styling()
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-dbp
-</th>
-<th style="text-align:center;">
-num\_peaks
-</th>
-<th style="text-align:center;">
-total\_peak\_length
-</th>
-<th style="text-align:center;">
-ensembl\_id
-</th>
-<th style="text-align:center;">
-dbd
-</th>
-<th style="text-align:center;">
-tf
-</th>
-<th style="text-align:center;">
-peaks\_overlapping\_promoters
-</th>
-<th style="text-align:center;">
-percent\_overlap
-</th>
-</tr>
-</thead>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> dbp </th>
+   <th style="text-align:center;"> num_peaks </th>
+   <th style="text-align:center;"> total_peak_length </th>
+   <th style="text-align:center;"> ensembl_id </th>
+   <th style="text-align:center;"> dbd </th>
+   <th style="text-align:center;"> tf </th>
+   <th style="text-align:center;"> peaks_overlapping_promoters </th>
+   <th style="text-align:center;"> percent_overlap </th>
+  </tr>
+ </thead>
 <tbody>
-<tr>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-2924
-</td>
-<td style="text-align:center;">
-1144729
-</td>
-<td style="text-align:center;">
-ENSG00000115816
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-3621
-</td>
-<td style="text-align:center;">
-124
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-149855
-</td>
-<td style="text-align:center;">
-76825958
-</td>
-<td style="text-align:center;">
-ENSG00000173575
-</td>
-<td style="text-align:center;">
-Myb/SANT
-</td>
-<td style="text-align:center;">
-No
-</td>
-<td style="text-align:center;">
-137496
-</td>
-<td style="text-align:center;">
-92
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-489583
-</td>
-<td style="text-align:center;">
-316310585
-</td>
-<td style="text-align:center;">
-ENSG00000102974
-</td>
-<td style="text-align:center;">
-C2H2 ZF
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-65416
-</td>
-<td style="text-align:center;">
-13
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-201858
-</td>
-<td style="text-align:center;">
-128731769
-</td>
-<td style="text-align:center;">
-ENSG00000120690
-</td>
-<td style="text-align:center;">
-Ets
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-158168
-</td>
-<td style="text-align:center;">
-78
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-9656
-</td>
-<td style="text-align:center;">
-8505661
-</td>
-<td style="text-align:center;">
-ENSG00000100393
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-No
-</td>
-<td style="text-align:center;">
-1156
-</td>
-<td style="text-align:center;">
-12
-</td>
-</tr>
+  <tr>
+   <td style="text-align:center;"> CEBPZ </td>
+   <td style="text-align:center;"> 3268 </td>
+   <td style="text-align:center;"> 1279403 </td>
+   <td style="text-align:center;"> ENSG00000115816 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 4047 </td>
+   <td style="text-align:center;"> 124 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CHD2 </td>
+   <td style="text-align:center;"> 167485 </td>
+   <td style="text-align:center;"> 85864306 </td>
+   <td style="text-align:center;"> ENSG00000173575 </td>
+   <td style="text-align:center;"> Myb/SANT </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> 153672 </td>
+   <td style="text-align:center;"> 92 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> 547181 </td>
+   <td style="text-align:center;"> 353523595 </td>
+   <td style="text-align:center;"> ENSG00000102974 </td>
+   <td style="text-align:center;"> C2H2 ZF </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 73112 </td>
+   <td style="text-align:center;"> 13 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> 225606 </td>
+   <td style="text-align:center;"> 143876683 </td>
+   <td style="text-align:center;"> ENSG00000120690 </td>
+   <td style="text-align:center;"> Ets </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 176776 </td>
+   <td style="text-align:center;"> 78 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> 10792 </td>
+   <td style="text-align:center;"> 9506327 </td>
+   <td style="text-align:center;"> ENSG00000100393 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> 1292 </td>
+   <td style="text-align:center;"> 12 </td>
+  </tr>
 </tbody>
 </table>
 
-## Results:
-
+## Results: 
 ## 1) What can you determine from these overlaps?
+### CEBPZ binds at promoters a lot (124%)
+### CHD2 binds at promoters a lot (92%)
+### CTCF does not bind at promoters a lot (13%)
+### ELF1 binds at promoters a lot (78%)
+### EP300 does not bind at promoters a lot (12%)
 
-### CEBPZ- binds at promoters a lot (124%)
 
-### CHD2- binds at promoters a lot (92%)
+## Now I want to compare the overlaps with lncRNA and mRNA promoters seperately 
 
-### CTCF- does not bind at promoters a lot (13%)
-
-### ELF1- binds at promoters a lot (78%)
-
-### EP300- does not bind at promoters a lot (12%)
-
-## Now I want to compare the overlaps with lncRNA and mRNA promoters seperately
-
-``` r
+```r
 # last handy annotation will be lncRNA and mRNA gene IDs to subset
 lncrna_gene_ids <- mrna_lncrna_genes$gene_id[mrna_lncrna_genes$gene_type == "lncRNA"]
 mrna_gene_ids <-mrna_lncrna_genes$gene_id[mrna_lncrna_genes$gene_type == "protein_coding"]
@@ -813,161 +512,74 @@ kableExtra::kbl(num_peaks_df[,c(1,2,5,6,7,9,10)], align="c") %>% kableExtra::kab
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-dbp
-</th>
-<th style="text-align:center;">
-num\_peaks
-</th>
-<th style="text-align:center;">
-dbd
-</th>
-<th style="text-align:center;">
-tf
-</th>
-<th style="text-align:center;">
-peaks\_overlapping\_promoters
-</th>
-<th style="text-align:center;">
-peaks\_overlapping\_lncrna\_promoters
-</th>
-<th style="text-align:center;">
-peaks\_overlapping\_mrna\_promoters
-</th>
-</tr>
-</thead>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> dbp </th>
+   <th style="text-align:center;"> num_peaks </th>
+   <th style="text-align:center;"> dbd </th>
+   <th style="text-align:center;"> tf </th>
+   <th style="text-align:center;"> peaks_overlapping_promoters </th>
+   <th style="text-align:center;"> peaks_overlapping_lncrna_promoters </th>
+   <th style="text-align:center;"> peaks_overlapping_mrna_promoters </th>
+  </tr>
+ </thead>
 <tbody>
-<tr>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-2924
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-3621
-</td>
-<td style="text-align:center;">
-578
-</td>
-<td style="text-align:center;">
-3043
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-149855
-</td>
-<td style="text-align:center;">
-Myb/SANT
-</td>
-<td style="text-align:center;">
-No
-</td>
-<td style="text-align:center;">
-137496
-</td>
-<td style="text-align:center;">
-28798
-</td>
-<td style="text-align:center;">
-108698
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-489583
-</td>
-<td style="text-align:center;">
-C2H2 ZF
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-65416
-</td>
-<td style="text-align:center;">
-22729
-</td>
-<td style="text-align:center;">
-42687
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-201858
-</td>
-<td style="text-align:center;">
-Ets
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-158168
-</td>
-<td style="text-align:center;">
-33541
-</td>
-<td style="text-align:center;">
-124627
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-9656
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-No
-</td>
-<td style="text-align:center;">
-1156
-</td>
-<td style="text-align:center;">
-663
-</td>
-<td style="text-align:center;">
-493
-</td>
-</tr>
+  <tr>
+   <td style="text-align:center;"> CEBPZ </td>
+   <td style="text-align:center;"> 3268 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 4047 </td>
+   <td style="text-align:center;"> 646 </td>
+   <td style="text-align:center;"> 3401 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CHD2 </td>
+   <td style="text-align:center;"> 167485 </td>
+   <td style="text-align:center;"> Myb/SANT </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> 153672 </td>
+   <td style="text-align:center;"> 32186 </td>
+   <td style="text-align:center;"> 121486 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> 547181 </td>
+   <td style="text-align:center;"> C2H2 ZF </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 73112 </td>
+   <td style="text-align:center;"> 25403 </td>
+   <td style="text-align:center;"> 47709 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> 225606 </td>
+   <td style="text-align:center;"> Ets </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 176776 </td>
+   <td style="text-align:center;"> 37487 </td>
+   <td style="text-align:center;"> 139289 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> 10792 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> 1292 </td>
+   <td style="text-align:center;"> 741 </td>
+   <td style="text-align:center;"> 551 </td>
+  </tr>
 </tbody>
 </table>
-
 ## Results:
-
 ## 1) What is the difference in overlaps between mRNA and lncRNA promoters
-
 ### All but 1 of the 5 proteins (EP300) bind promoters more in mRNA than lncRNA.
 
 ## Now I am going to test if there is more binding over gene bodies than promoters
+## I will seperate lncRNA and mRNA gene bodies to find the overlaps 
 
-## I will seperate lncRNA and mRNA gene bodies to find the overlaps
 
-``` r
+```r
 # Finding overlaps with gene_bodies
 genebody_peak_counts <- count_peaks_per_feature(mrna_lncrna_genes, 
                                                 consensus_peaks, 
@@ -992,177 +604,80 @@ kableExtra::kbl(num_peaks_df[,c(1:7,11)], align="c") %>% kableExtra::kable_styli
 ```
 
 <table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-dbp
-</th>
-<th style="text-align:center;">
-num\_peaks
-</th>
-<th style="text-align:center;">
-total\_peak\_length
-</th>
-<th style="text-align:center;">
-ensembl\_id
-</th>
-<th style="text-align:center;">
-dbd
-</th>
-<th style="text-align:center;">
-tf
-</th>
-<th style="text-align:center;">
-peaks\_overlapping\_promoters
-</th>
-<th style="text-align:center;">
-peaks\_overlapping\_genebody
-</th>
-</tr>
-</thead>
+ <thead>
+  <tr>
+   <th style="text-align:center;"> dbp </th>
+   <th style="text-align:center;"> num_peaks </th>
+   <th style="text-align:center;"> total_peak_length </th>
+   <th style="text-align:center;"> ensembl_id </th>
+   <th style="text-align:center;"> dbd </th>
+   <th style="text-align:center;"> tf </th>
+   <th style="text-align:center;"> peaks_overlapping_promoters </th>
+   <th style="text-align:center;"> peaks_overlapping_genebody </th>
+  </tr>
+ </thead>
 <tbody>
-<tr>
-<td style="text-align:center;">
-CEBPZ
-</td>
-<td style="text-align:center;">
-2924
-</td>
-<td style="text-align:center;">
-1144729
-</td>
-<td style="text-align:center;">
-ENSG00000115816
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-3621
-</td>
-<td style="text-align:center;">
-3519
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CHD2
-</td>
-<td style="text-align:center;">
-149855
-</td>
-<td style="text-align:center;">
-76825958
-</td>
-<td style="text-align:center;">
-ENSG00000173575
-</td>
-<td style="text-align:center;">
-Myb/SANT
-</td>
-<td style="text-align:center;">
-No
-</td>
-<td style="text-align:center;">
-137496
-</td>
-<td style="text-align:center;">
-177701
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-CTCF
-</td>
-<td style="text-align:center;">
-489583
-</td>
-<td style="text-align:center;">
-316310585
-</td>
-<td style="text-align:center;">
-ENSG00000102974
-</td>
-<td style="text-align:center;">
-C2H2 ZF
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-65416
-</td>
-<td style="text-align:center;">
-377536
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-ELF1
-</td>
-<td style="text-align:center;">
-201858
-</td>
-<td style="text-align:center;">
-128731769
-</td>
-<td style="text-align:center;">
-ENSG00000120690
-</td>
-<td style="text-align:center;">
-Ets
-</td>
-<td style="text-align:center;">
-Yes
-</td>
-<td style="text-align:center;">
-158168
-</td>
-<td style="text-align:center;">
-234889
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-EP300
-</td>
-<td style="text-align:center;">
-9656
-</td>
-<td style="text-align:center;">
-8505661
-</td>
-<td style="text-align:center;">
-ENSG00000100393
-</td>
-<td style="text-align:center;">
-Unknown
-</td>
-<td style="text-align:center;">
-No
-</td>
-<td style="text-align:center;">
-1156
-</td>
-<td style="text-align:center;">
-7463
-</td>
-</tr>
+  <tr>
+   <td style="text-align:center;"> CEBPZ </td>
+   <td style="text-align:center;"> 3268 </td>
+   <td style="text-align:center;"> 1279403 </td>
+   <td style="text-align:center;"> ENSG00000115816 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 4047 </td>
+   <td style="text-align:center;"> 3933 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CHD2 </td>
+   <td style="text-align:center;"> 167485 </td>
+   <td style="text-align:center;"> 85864306 </td>
+   <td style="text-align:center;"> ENSG00000173575 </td>
+   <td style="text-align:center;"> Myb/SANT </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> 153672 </td>
+   <td style="text-align:center;"> 198607 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> CTCF </td>
+   <td style="text-align:center;"> 547181 </td>
+   <td style="text-align:center;"> 353523595 </td>
+   <td style="text-align:center;"> ENSG00000102974 </td>
+   <td style="text-align:center;"> C2H2 ZF </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 73112 </td>
+   <td style="text-align:center;"> 421952 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> ELF1 </td>
+   <td style="text-align:center;"> 225606 </td>
+   <td style="text-align:center;"> 143876683 </td>
+   <td style="text-align:center;"> ENSG00000120690 </td>
+   <td style="text-align:center;"> Ets </td>
+   <td style="text-align:center;"> Yes </td>
+   <td style="text-align:center;"> 176776 </td>
+   <td style="text-align:center;"> 262523 </td>
+  </tr>
+  <tr>
+   <td style="text-align:center;"> EP300 </td>
+   <td style="text-align:center;"> 10792 </td>
+   <td style="text-align:center;"> 9506327 </td>
+   <td style="text-align:center;"> ENSG00000100393 </td>
+   <td style="text-align:center;"> Unknown </td>
+   <td style="text-align:center;"> No </td>
+   <td style="text-align:center;"> 1292 </td>
+   <td style="text-align:center;"> 8341 </td>
+  </tr>
 </tbody>
 </table>
-
-## Results:
-
+## Results: 
 ## 1) Do my proteins have more overlaps with promoters or genebodies?
-
 ### All but 1 protein (CEBPZ) overlaps more with genebodies than promoters.
 
-## It is nice and all to find overlaps, but I am interested in how many proteins bind a specific promoter. I will use my handy “occurence” parameter in " count peaks per feature"
 
-``` r
+## It is nice and all to find overlaps, but I am interested in how many proteins bind a specific promoter. I will use my handy "occurence" parameter in " count peaks per feature" 
+
+
+```r
 promoter_peak_occurence <- count_peaks_per_feature(lncrna_mrna_promoters, consensus_peaks, 
                                                type = "occurrence") 
 
@@ -1186,21 +701,21 @@ write_csv(peak_occurence_df, "results/peak_occurence_dataframe.csv")
 
 # summary of number of dbp binding promoter
 sum_tab <- table(peak_occurence_df$number_of_dbp)
-names(dimnames(sum_tab)) <- c("# proteins bound specific promoter")
+names(dimnames(sum_tab)) <- c("Max number of proteins bound specific promoter")
 sum_tab
 ```
 
-    ## # proteins bound specific promoter
-    ##     0     1     2     3     4 
-    ## 24271  5895  5363  1270    15
-
+```
+## Max number of proteins bound specific promoter
+##     0     1     2     3     4 
+## 24271  5895  5363  1270    15
+```
 ## Results: I find the max number of proteins on a promoter to be 4.
 
 ## Now I want to start plotting my results
-
 ## First I will see if there is a realtionship between peak number and total DNA covered
 
-``` r
+```r
 ggplot(num_peaks_df, aes(x = num_peaks, 
                          y = total_peak_length)) +
   geom_point() +
@@ -1210,11 +725,11 @@ ggplot(num_peaks_df, aes(x = num_peaks,
   geom_smooth(method = "lm", se=F)
 ```
 
-![](class_exercise_mehrhroff_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](class_exercise_mehrhroff_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 ## Now I want to color my plot by whether the protein is a TF or not.
 
-``` r
+```r
 ggplot(num_peaks_df, aes(x = num_peaks, 
                          y = total_peak_length, color=tf)) +
   geom_point() +
@@ -1223,11 +738,12 @@ ggplot(num_peaks_df, aes(x = num_peaks,
        title= "Number of Peaks and the Total DNA Covered") 
 ```
 
-![](class_exercise_mehrhroff_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](class_exercise_mehrhroff_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 ## I want to make a histogram of the number of peaks for each of my proteins
 
-``` r
+
+```r
 ggplot(num_peaks_df, aes(x = num_peaks)) +
   geom_histogram(bins=5, fill="#6495ED", color="black") +
   labs(x="Number of Peaks",
@@ -1235,17 +751,28 @@ ggplot(num_peaks_df, aes(x = num_peaks)) +
        title= "Number of Peaks for all the Proteins")
 ```
 
-![](class_exercise_mehrhroff_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](class_exercise_mehrhroff_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
 
 ## Now I want to facet this by the type of DNA binding domain my protein has.
 
-``` r
+```r
 #ggplot(num_peaks_df, aes(x = num_peaks)) +
   #geom_histogram(bins=7) +
   #facet_wrap(~dbd)
-# If you take previous graph and use facet wrap it doesn't look right
-# represent data using bar plot
+# If you take previous graph and facet wrap it by dbp it won't look right because each histogram would only have 1 piece of information.
+# Could represent as histogram that has colored bars for each dbd or a bar plot
 
+ggplot(num_peaks_df, aes(x = num_peaks, fill=dbd)) +
+  geom_histogram(bins=5) +
+  labs(x="Number of Peaks",
+       y="Frequency",
+       title= "Number of Peaks for all the Proteins")
+```
+
+![](class_exercise_mehrhroff_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+```r
 ggplot(num_peaks_df, aes(
       x = dbd,
       y = num_peaks, fill=dbd)) +
@@ -1255,16 +782,7 @@ ggplot(num_peaks_df, aes(
        title= "Number of Peaks by Type of DNA Binding Protein") 
 ```
 
-![](class_exercise_mehrhroff_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](class_exercise_mehrhroff_files/figure-html/unnamed-chunk-11-2.png)<!-- -->
 
-``` r
-ggplot(num_peaks_df, aes(x = num_peaks, fill=dbd)) +
-  geom_histogram(bins=5) +
-  labs(x="Number of Peaks",
-       y="Frequency",
-       title= "Number of Peaks for all the Proteins")
-```
-
-![](class_exercise_mehrhroff_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
 
 ## Cool now I am ready to send my result to my collaborator as a Knitted document
