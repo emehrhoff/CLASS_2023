@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 options(stringsAsFactors = F)
 
 library(ggplot2)
-library(ggpubr)
+#library(ggpubr)
 library(tidyverse)
 
 source("../../../util/plotting_functions.R")
@@ -46,7 +46,7 @@ Plotting layers of R:
 
 6) Facets -- making multiple representations of plots
 
-7) Coordinates -- specifing placement of image aspects
+7) Coordinates -- specifying placement of image aspects
 
 8) THEME -- a set version of colors, background. Mostly so you don't have to add many of the layers above everytime!
 
@@ -136,9 +136,8 @@ Let's plot three plots for if DBP is a TF, is not or NA.
 ```{R facet by TF annotation}
 
 ggplot(big_num_peaks_df, aes(x = num_peaks, 
-                 y = total_peak_length
-                )) +
-  facet_wrap(tf ~ .) +
+                 y = total_peak_length)) +
+  facet_wrap(tf ~ .) + # can be mapped to second column too
   geom_point() 
 
 # nice we see three plots, one for each category.
@@ -152,7 +151,7 @@ geom_histogram() is very useful in a lot of analyses. Let's start there.
 
 ```{r Geom_histogram}
 
-# frequencty of peak numbers across DBPs
+# frequency of peak numbers across DBPs
 
 ggplot(big_num_peaks_df, aes(x = num_peaks)) +
   geom_histogram()
@@ -162,7 +161,7 @@ ggplot(big_num_peaks_df, aes(x = num_peaks)) +
 # let's add more bins
 
 ggplot(big_num_peaks_df, aes(x = num_peaks)) +
-  geom_histogram(bins = 30)
+  geom_histogram(bins = 70)
 
 # Let's chage the color of the bars in histogram by number of peaks.
 # again we need to do this inside aes() since the data needs to read.
@@ -367,7 +366,7 @@ dbds <- c("C2H2 ZF", "Homeodomain", "bZIP")
 ggplot(big_num_peaks_df %>% 
          filter(dbd %in% dbds),
        aes(x = num_peaks, y = total_peak_length )) +
-  facet_grid(dbd ~ .) + 
+  facet_grid(dbd ~ .) + # horizontal plots
   geom_point()
 
 # here we call facet grid. The parameters are rows and columns separated by ~
@@ -381,7 +380,7 @@ We can also facet grid another parameter -- let's say tf
 ggplot(big_num_peaks_df %>% 
          filter(dbd %in% dbds),
        aes(x = num_peaks, y = total_peak_length )) +
-  facet_grid(dbd ~ tf) + 
+  facet_grid(dbd ~ tf) + # dbd then tf within that 
   geom_point()
 
 

@@ -45,10 +45,10 @@ just having the advantage of indexing chromosome and strand to the start and sto
 # Let's create a GRange using IRange logic. What we need is:
 # Chromosome, Strand, Ranges
 
-gr <- GRanges(seqnames = c("chrX"), strand = c("+", "-", "*"), ranges = IRanges(start = c(1,200, 1000), end = c(30, 299, 1200)))
+gr <- GRanges(seqnames = c("chrX"), strand = c("+", "-", "*"), ranges = IRanges(start = c(1,200, 1000), end = c(30, 299, 1200))) # mini genome
 
 # let's see 
-gr
+gr # telling us no seqlengths 
 
 # the first thing to note is we see a unique identifier for the X chromosome as
 # 'seqnames'(similar to names above)
@@ -69,7 +69,7 @@ seqinfo(gr)
 seqlengths(gr)
 
 # we see that we only have one 'level' here for ChrX, let's add another chromosome
-seqlevels(gr) <- c("chrX", "chrY")
+seqlevels(gr) <- c("chrX", "chrY") # use for comparison 
 seqlevels(gr)
 # now we can see that we have a level that contains both the X nad Y chromosome.
 
@@ -89,15 +89,15 @@ I have some set up to test in the data folder.
 ```{R find overlaps}
 
 # setting file path to peak files
-basepath <- "/scratch/Shares/rinnclass/CLASS_2023/<your_folder>"
-path <- "CLASS_2023/CLASSES/03_Nextflow/00_Pol2_NF_CORE_RUN/results/bwa/mergedLibrary/macs/broadPeak"
+basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
+path <- "/group/results/bwa/mergedLibrary/macs/broadPeak"
 
 # first we read the peak files in as gRanges object with rtracklayer function.
-peaks1 <- rtracklayer::import(file.path(basepath,path, "POLR2A_R1_peaks.broadPeak"))
-peaks2 <- rtracklayer::import(file.path(basepath,path, "POLR2A_R2_peaks.broadPeak"))
+peaks1 <- rtracklayer::import(file.path(basepath,path, "CTCF_R2_peaks.broadPeak"))
+peaks2 <- rtracklayer::import(file.path(basepath,path, "CTCF_R3_peaks.broadPeak"))
 
 # let's take a look:
-peaks1
+peaks1 # can index 
 
 # for reference to last class looking at this file
 peaks_1_tsv <- read_tsv(file.path(basepath,path, "POLR2A_R1_peaks.broadPeak"), colnames = F)
@@ -106,10 +106,11 @@ peaks_1_tsv <- read_tsv(file.path(basepath,path, "POLR2A_R1_peaks.broadPeak"), c
 ?findOverlaps
 ?import
 
+# findoverlap(subject,query)
 ovf <- findOverlaps(peaks1, peaks2)
-length(peaks1)
+length(peaks1) # how many peaks 
 length(peaks2)
-length(ovf)
+length(ovf) # how many overlaps 
 
 ```
 # NOTE: the first file is query and second is the subject. 
@@ -174,6 +175,7 @@ summary(width(crazy_peaks2))
 # there peaks in peak1 are generally larger than peak2
 # thus a peak in peak1 could overlap multiple peaks in peak2 (vice versa too).
 
+# a bunch or barely any is based on order of subject and querey 
 ```
 Result: peaks in crazy_peaks1 are about 2x bigger (consistent with multiple overlaps)
 
@@ -195,7 +197,7 @@ We can get more information from then results of findOverlaps.
 # let's understand this more deeply there are some subtilties we should cover
 # let's table the @from index
 table(crazy_ovf@from) 
-table(table(crazy_ovf@from))
+table(table(crazy_ovf@from)) # find unique overlaps. WANT ALL!
 
 # SOLUTION !! This solves it the sum of these is 11K overlaps!
 # There are 6,388 unique peak overlaps -- maybe the result you
@@ -220,7 +222,7 @@ We can look at how overlaps are reported using: countOverlaps
 ```{r countOverlaps for GRanges}
 
 # let's try countOverlaps
-crazy_ovf2 <-countOverlaps(crazy_peaks1, crazy_peaks2)
+crazy_ovf2 <-countOverlaps(crazy_peaks1, crazy_peaks2) # return a number you acutally want!!!
 # NOTE - INTEGER VALUE IN ENVIRONMENT 
 # There as many enteries as peaks in crazy_peaks1 (subject)
 # each entry has number of times that peak had an overlaps

@@ -2,7 +2,8 @@
 title: "Class Exercise"
 author: "Erika Mehrhoff"
 date: "3/17/2023"
-output: html_document
+output: github_document
+always_allow_html: true
 ---
 
 
@@ -16,6 +17,7 @@ library(GenomicRanges)
 library(tidyverse)
 library(IRanges)
 library(ggplot2)
+
 source("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/util/BCMH5631_functions.R")
 source("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/util/my_class_functions.R")
 source("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/util/plotting_functions.R")
@@ -172,7 +174,6 @@ names(human_tfs) <- c("ensembl_id",
                       "tf")
 
 # merge
-num_peaks_df2 <- num_peaks_df
 num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T) 
 
 # Let's check how many NAs -- we should have some missing values. 
@@ -180,7 +181,6 @@ dim(num_peaks_df[is.na(num_peaks_df$tf),])
 
 # if you leave the object name you just created in the environment
 # it will print out in the knit
-kableExtra::kbl(num_peaks_df2, align="c") %>% kableExtra::kable_styling()
 kableExtra::kbl(num_peaks_df, align="c") %>% kableExtra::kable_styling()
 ```
 

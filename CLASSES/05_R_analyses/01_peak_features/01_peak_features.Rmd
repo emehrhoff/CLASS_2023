@@ -12,12 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 options(stringsAsFactors = F)
 library(tidyverse)
 library(GenomicRanges)
-source("../../../util/my_class_functions.R")
+source("util/my_class_functions.R")
 
 # filepath to import peaks
-basepath <- "/scratch/Shares/rinnclass/CLASS_2023/JR"
-peak_path <- "CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks"
-consensusPeakPath <- file.path(basepath, peak_path)
+basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
+consensus_path <- "CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks"
+consensusPeakPath <- file.path(basepath, consensus_path)
 ```
 Accompanying Youtube Video:
 https://youtu.be/OhVcBOov2Go
@@ -47,7 +47,7 @@ set working directory to CLASS_2023/CLASSES/05_R_analyses/01_peak_features
 ```{r importing files}
 
 consensus_peaks_files <- list.files(consensusPeakPath, 
-                                             pattern = "*.bed",
+                                             pattern = "*consensus.bed",
                                              full.names = TRUE)
 
 # lapply with import function to make a list of GRanges
@@ -55,7 +55,7 @@ consensus_peaks <- lapply(consensus_peaks_files, rtracklayer::import)
 
 # adding DBP name to each list of GRanges from the file name
 # note gsub requires no space around or argument ( | )
-names(consensus_peaks) <- gsub("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks/|_consensus.bed","", consensus_peaks_files)
+names(consensus_peaks) <- gsub("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks/|_consensus.bed","", consensus_peaks_files)
 
 ```
 
@@ -79,6 +79,7 @@ rtracklayer::export(gencode_genes, "results/gene_annotations/gencode_genes.gtf")
 
 # mRNA genes (called "protein_coding") in this version of gencode changes sometimes !
 mrna_genes <- gencode_genes[gencode_genes$gene_type %in% "protein_coding"] 
+# ANNOTATE STARTS AND STOPS
 
 rtracklayer::export(mrna_genes, "results/gene_annotations/mrna_genes.gtf")
 table(gencode_genes$gene_type)
@@ -119,6 +120,9 @@ lncrna_mrna_promoters <- promoters(lncrna_mrna_genes, upstream = 1000, downstrea
 width(lncrna_mrna_promoters)
 rtracklayer::export(lncrna_mrna_promoters, "results/gene_annotations/lncrna_mrna_promoters.gtf")
 
+
+#lncrna_mrna_promoters_df <- as.data.frame(lncrna_mrna_promoters)
+#lncrna_mrna_promoters_df[,lncrna_mrna_promoters_df$width!="2000"]
 
 # last handy annotation will be lncRNA and mRNA gene IDs to subset
 lncrna_gene_ids <- mrna_lncrna_genes$gene_id[mrna_lncrna_genes$gene_type == "lncRNA"]
@@ -183,6 +187,8 @@ num_peaks_df$peaks_overlapping_lncrna_promoters <- rowSums(promoter_peak_counts[
 # mrna promoter overlaps
 num_peaks_df$peaks_overlapping_mrna_promoters <- rowSums(promoter_peak_counts[,mrna_gene_ids])
 
+
+# result lcrna  have fewer binding? 
 # Let's take a look.
 write_csv(num_peaks_df, "results/num_peaks_df.csv")
 
@@ -217,7 +223,8 @@ num_peaks_df$peaks_overlapping_mrna_genebody <-
 
 # let's take a look.
 # cool lots of info let's save:
-write_csv(num_peaks_df, "num_peaks_df.csv")
+write_csv(num_peaks_df, "results/num_peaks_df.csv")
+# results 
 
 ```
 
@@ -261,6 +268,9 @@ names(human_tfs)[4] <- "is_tf"
 
 # now let's intersect gene names that are in our ChIP data and has TF identity.
 length(which(tolower(num_peaks_df$dbp) %in% tolower(human_tfs$Name)))
+
+# tolower takes all names of df and make lower case to match human tf file
+# 
 ```
 
 # merging annotation file to num_peaks_df
@@ -269,7 +279,7 @@ length(which(tolower(num_peaks_df$dbp) %in% tolower(human_tfs$Name)))
 
 # first let's filter and grab the first 4 columns that match DBPs in num_peaks_df
 human_tfs <- human_tfs[tolower(human_tfs$Name) %in% tolower(num_peaks_df$dbp), 1:4]
-
+# which of 4 mapped to downloaded file 
 
 # adding new column names
 names(human_tfs) <- c("ensembl_id",
@@ -280,7 +290,7 @@ names(human_tfs) <- c("ensembl_id",
 # Now comes the actual merge. Let's look at it first
 # ?merge
 
-num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T)
+num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T) #
 
 # Let's check how many NAs -- we should have some missing values.
 dim(num_peaks_df[is.na(num_peaks_df$tf),])
@@ -300,7 +310,7 @@ This can be used for meta plots or slecting a given gene for an overlap etc.
 
 # note similar as above but using type = occurnece
 promoter_peak_occurence <- count_peaks_per_feature(lncrna_mrna_promoters, consensus_peaks, 
-                                               type = "occurrence")
+                                               type = "occurrence") # instead of counts (1 or 0 if overlap promoter?)
 
 # Let's double check that all lncrna & mrna genes are accounted for:
 stopifnot(all(colnames(promoter_peak_occurence) == lncrna_mrna_promoters$gene_id))

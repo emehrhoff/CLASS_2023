@@ -68,10 +68,10 @@ Let's make a list of ranges and see what this looks like.
 # Let's use an example of a ChiP-peak-files each with three peaks. We can use
 # this simple example to construct and intersect ranges -- a common procedure
 
-ir1 <- IRanges(start = c(1,200, 1000), end = c(30, 299, 1200))
+ir1 <- IRanges(start = c(1,200, 1000), end = c(30, 299, 1200)) # can only be for one chromosoem in this format 
 
 # take a look
-ir1
+ir1 # off by 1 because of the 0 1 issue 
 
 # we can use a lot of Iranges functions to look at what we just made
 start(ir1)

@@ -26,13 +26,14 @@ First we need to import POLR2A Chip-seq files -- a simple .bed file of peaks.
 ```{r reading in Pol2 peaks}
 
 # setting file path to peak files
-
-basepath <- "/scratch/Shares/rinnclass/CLASS_2023/<your_folder>"
-path <- "CLASS_2023/CLASSES/03_Nextflow/00_Pol2_NF_CORE_RUN/results/bwa/mergedLibrary/macs/broadPeak"
+basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
+path <- "/group/results/bwa/mergedLibrary/macs/broadPeak"
 
 # first we read the peak files in as gRanges object with rtracklayer function.
-peaks1 <- rtracklayer::import(file.path(basepath,path, "POLR2A_R1_peaks.broadPeak"))
-peaks2 <- rtracklayer::import(file.path(basepath,path, "POLR2A_R2_peaks.broadPeak"))
+peaks1 <- rtracklayer::import(file.path(basepath,path, "CTCF_R2_peaks.broadPeak"))
+peaks2 <- rtracklayer::import(file.path(basepath,path, "CTCF_R3_peaks.broadPeak"))
+
+
 
 # Load Gencode-v32: for genome features.
 gencode_gr <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2023/data/data/genomes/gencode.v32.annotation.gtf")
@@ -49,9 +50,11 @@ Now let's define the promoters using the handy promoters function in GRanges
 ?promoters
 
 # let's add 1Kb upstream and downstream from the TSS to define "promoters"
-gencode_promoters <- promoters(gencode_gr[gencode_gr$type == "gene"], 
+gencode_promoters <- promoters(gencode_gr[gencode_gr$type == "gene"], # shorthand, could us @
                                upstream = 1e3, 
-                               downstream = 1e3)
+                               downstream = 1e3) # shrink less overlaps? some think 200bp
+# could make another object of genes. length? (CDS instead of =="gene")
+# could do exon
 
 
 length(gencode_promoters)
@@ -66,16 +69,22 @@ Now we have promoter ranges and peak ranges let's use findOverlaps function
 ```{R findoverlaps chip peaks &}
 # Promoter overlap function requires two parameters:
 # Query file (peaks) and subject file (promoters)
-promoter_overlaps_pol2_peaks1 <- findOverlaps(peaks1, gencode_promoters)
+promoter_overlaps_CTCF_peaks1 <- findOverlaps(peaks1, gencode_promoters)
 # Let's look
-promoter_overlaps_pol2_peaks1
+promoter_overlaps_CTCF_peaks1 # 13007 overlaps 
+length(peaks1)
+# 65526 peaks overlapped 13007 promoters!!!!
 
 # nice we see that 19,063 promoters overlap with Pol2 replicate 1.
 # Let's try the same for replicate 2:
 
-promoter_overlaps_pol2_peaks2 <- findOverlaps(peaks2, gencode_promoters)
+promoter_overlaps_CTCF_peaks2 <- findOverlaps(peaks2, gencode_promoters)
 # Let's look
-promoter_overlaps_pol2_peaks2
+promoter_overlaps_CTCF_peaks2
+length(peaks2)
+# 83141 peaks overlap at 13892 promoters
+# PERCENTAGE 
+# 30% of promoters that exist pol2 binds to!!! 
 
 # 19,700 promoters overlap -- so similar to rep 1.
 ```
@@ -88,7 +97,7 @@ We can use our new skill and findOverlaps of the overlaps :)
 # one obvious thought maybe to do findOverlaps(promoter_overlaps_pol2_peaks1, promoter_overlaps_pol2_peaks2)
 # Let's try it !
 
-same_prom_ov <- findOverlaps(promoter_overlaps_pol2_peaks1, promoter_overlaps_pol2_peaks2)
+same_prom_ov <- findOverlaps(promoter_overlaps_CTCF_peaks1, promoter_overlaps_CTCF_peaks2)
 
 # huh that didn't work? Why not?
 ```
@@ -105,14 +114,17 @@ NOTE: each peak is going to have numerous overlaps so we want only the unique on
 # Since we did peaks1, gencode promoters peaks1 is @ from and promoters @ to
 
 # indexing
-peak1_ov_gr <- peaks1[unique(promoter_overlaps_pol2_peaks1@from)] 
+peak1_ov_gr <- peaks1[unique(promoter_overlaps_CTCF_peaks1@from)] # which of peaks overlap promoters and only once 
+# now grange file and can find overlap now!
+length(peak1_ov_gr) # 10381 
 
 # indexing
-peak2_ov_gr <- peaks2[unique(promoter_overlaps_pol2_peaks2@from)]
+peak2_ov_gr <- peaks2[unique(promoter_overlaps_CTCF_peaks2@from)]
 
 # now let's find the overlaps of the overlaps
 ov_of_ov <- findOverlaps(peak1_ov_gr, peak2_ov_gr)
-ov_of_ov
+ov_of_ov # 7939 overlaps in both files and how many peaks in each file. percent in common should be high 
+# DO FOR EACH PROTEIN!
 
 # nice we see that there are 12,961 promoter overlaps in common.
 # 13,857 and 14,403 promoter ov had 12,961 in common ~90% !
@@ -130,16 +142,16 @@ This will retrieve the overlapping index only from the original Granges.
 ```{r SubsetByOverlaps }
 
 # subset overlaps from peaks1 and promoters
-promoter_overlaps_pol2_peaks1 <- subsetByOverlaps(peaks1, gencode_promoters)
+promoter_overlaps_CTCF_peaks1 <- subsetByOverlaps(peaks1, gencode_promoters)
 
 # Let's look
-promoter_overlaps_pol2_peaks1
+promoter_overlaps_CTCF_peaks1 # 10381. same!
 # 13,857 = same as before with findOverlaps
 
 # subset overlaps from peaks2 and promoters
-promoter_overlaps_pol2_peaks2 <- subsetByOverlaps(peaks2, gencode_promoters)
+promoter_overlaps_CTCF_peaks2 <- subsetByOverlaps(peaks2, gencode_promoters) # just unique ones
 # Let's look
-promoter_overlaps_pol2_peaks2
+promoter_overlaps_CTCF_peaks2 # 11337 same?
 # 14,403 = same as before with findOverlaps
 
 # now overlapping the two overlaps by findOverlaps
@@ -156,7 +168,7 @@ Let's see if perhaps this is more overlaps than peaks !
 
 # how many unique peaks resulted in 12,961 overlaps
 ```{r how many unique peaks had overlaps}
-
+# another way to do it?
 # we can use length and unique to solve this
 length(unique(subset_overlaps_peaks@to))
 length(unique(subset_overlaps_peaks@to))
@@ -189,9 +201,11 @@ Now let's overlap our peak files and then overlap with promoters.
 
 ```{r peak overlaps and promoter overlaps}
 
-pol2_consensus_peaks <- subsetByOverlaps(peaks1, peaks2)
-pol2_consensus_peaks
+CTCF_consensus_peaks <- subsetByOverlaps(peaks1, peaks2)
+CTCF_consensus_peaks # every repilcate included in parsing out. 54404
 # 27,206 
+# start and end of peak, one making it wider?
+# how to get consuns peaks back into normal file to get start and stop. can index but trickier. data frame?
 peaks1
 # 33,582
 peaks2
@@ -200,9 +214,9 @@ peaks2
 # Ok so we somethign similar to R_basica/03_
 
 # Overlap with promoters:
-pol2_consensus_peaks_ov_promoters <- subsetByOverlaps(pol2_consensus_peaks, gencode_promoters)
+CTCF_consensus_peaks_ov_promoters <- subsetByOverlaps(CTCF_consensus_peaks, gencode_promoters)
 # Let's look
-pol2_consensus_peaks_ov_promoters
+CTCF_consensus_peaks_ov_promoters # 7909. slightly different than before?
 # 12,331
 ```
 

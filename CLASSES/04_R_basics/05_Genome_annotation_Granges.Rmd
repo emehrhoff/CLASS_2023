@@ -71,7 +71,7 @@ table(seqnames(gencode_gr)) %>%
 # this tells us how many features there are in the genome.
 
 # Let's find out how many features the mitochondrial chr has (25th level)
-table(seqnames(gencode_gr))[25] 
+table(seqnames(gencode_gr))[25] # 143 features assocaited with it 
 
 # we see this is the mitochondrial chromosome and has 143 elements
 
@@ -84,7 +84,7 @@ table(seqnames(gencode_gr))[25]
 
 # let's see how many 'gene_id' values there are by indexing
 table(gencode_gr@elementMetadata$gene_id) %>% 
-  head()
+  head() # tell you gene id and nubmer of features each one has 
 # This tell us how many features are associated with each gene id.
 
 # Let's see what we get with gene_name
@@ -139,7 +139,7 @@ Note we see that we can index the RANGES for each gene with @ranges "level"
 mrna_df <- filter(gencode_gr_length, gene_type == "protein_coding", type == "gene")
 
 # we can easily plot a histogram of mRNA gene widths.
-hist(log10(mrna_df$width), breaks = 60)
+hist(log10(mrna_df$width), breaks = 60) 
 
 # same for lncRNAs
 lncrna_df <- filter(gencode_gr_length, gene_type == "lncRNA", type == "gene")
@@ -163,7 +163,7 @@ this has all the info of types of genes included.
 ```{R gene types}
 
 # indexing into gene typse 
-table(gencode_gr@elementMetadata$type)
+table(gencode_gr@elementMetadata$type) 
 
 ## cool this tell us a lot about the genome with one line!
 
@@ -176,7 +176,7 @@ But first let's see how to find the lengths of genome features.
 ```{R annotation lengths} 
 
 # Let's see the range of gene sizes
-summary(width(gencode_gr))
+summary(width(gencode_gr)) #lengths
 
 ```
 
@@ -190,7 +190,7 @@ width_1_items <- gencode_gr[width(gencode_gr) == 1] %>%
   as.data.frame()
 
 # let's look
-table(width_1_items$type)
+table(width_1_items$type) # exon and CDS should not be this short 
 # so weird that a CDS can be 1nt or an exon.
 
 # looking for weird exons (also CDS and codons don't make sense to be = 1??)

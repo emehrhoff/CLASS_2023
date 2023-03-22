@@ -13,11 +13,10 @@ options(stringsAsFactors = F)
 library(GenomicRanges)
 library(tidyverse)
 library(IRanges)
-source("../../../util/my_class_functions.R")
-
-# filepath to import peaks
-basepath <- "/scratch/Shares/rinnclass/CLASS_2023/<your_folder>"
-peak_path <- "CLASS_2023/CLASSES/03_Nextflow/00_my_chipseq/results/bwa/mergedLibrary/macs/broadPeak/"
+source("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/util/BCMH5631_functions.R")
+# setting file paths
+basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
+peak_path <- "/group/results/bwa/mergedLibrary/macs/broadPeak"
 broadpeakfilepath <- file.path(basepath, peak_path)
 ```
 Acompanying youtube video:
@@ -85,7 +84,7 @@ num_consensus_peaks <- sapply(consensus_list, length) %>%
 
 
 # merge into num_peaks
-peak_num <- left_join(peak_num, num_consensus_peaks)
+peak_num <- left_join(peak_num, num_consensus_peaks) # output tells you what it picked to use for merge : Joining with `by = join_by(dbp)`
 
 # saving 
 write_csv(peak_num, "results/num_peaks_df.csv")
@@ -98,8 +97,8 @@ Let's use "analysis/00_consensus_peaks/
 
 ```{r exporting consensus peaks }
 # setting file path to export
-basepath <- "/scratch/Shares/rinnclass/CLASS_2023/<your_folder>"
-consensus_path <- "CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/"
+basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
+consensus_path <- "/CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks/"
 exportpath <- file.path(basepath, consensus_path)
 
 # /scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks
@@ -131,7 +130,7 @@ peak_1 <- read_tsv("EP300_consensus_peaks.bed", col_names = F)
 Rtracklayer export does not keep the col names :( 
 ```{r reading .bed file from rtracklayer_export}
 # FIRST a file list:
-consensus_file_list <- list.files("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks", full.names = T, pattern = ".bed")
+consensus_file_list <- list.files("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/00_consensus_peaks/consensus_peaks", full.names = T, pattern = ".bed")
 
 # lapply (for loop) across consensus file list to add colnames
 # The actual col names for .broadPeak are: chr, start, end, name, score, strand
@@ -150,15 +149,15 @@ canonical_chr <- c(paste0("chr", 1:22), "chrM", "chrX", "chrY")
 # let's use lapply with filter funciton to cannonical_chr
 peaks <- lapply(peaks, function(x) x %>% filter(chr %in% canonical_chr))
 
-
 # now that these are all nice and clean let's export:
 new_filenames <- paste0("consensus_peaks/", names(peaks), "_consensus.bed")
 
 for(i in 1:length(peaks)) {
   write.table(peaks[[i]], new_filenames[[i]],
               sep = "\t", col.names = FALSE, row.names = FALSE,
-              quote = FALSE, append = TRUE)
+              quote = FALSE, append = TRUE) # t for tab separated 
 }
+# grange need to use export but for bed can do write table 
 
 ```
 
@@ -179,12 +178,16 @@ The header we need is : track type=broadPeak name="
 # we are using paste0 to print the header text
 # then we are adding the names as the value the header equals with 'names' function
 
-headers <- paste0("track type=bedGraph name=", names(peaks))
+# ucsc is picky for naming 
+headers <- paste0("track type=bedGraph name=", names(peaks)) # type could be bigwig 
 headers
 
 # creating a path to export after we add header in for loop below
 new_filenames <- paste0("ucsc_consensus_peaks/", names(peaks), ".bed")
 new_filenames
+
+# my data, my session 
+# BCHM_5631 password the same 
 ```
 
 Cool, now we have an object "new_filenames" that has 

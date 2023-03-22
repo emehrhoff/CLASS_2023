@@ -111,17 +111,11 @@ Exercise : install packages needed for class
 
 # probably worth reading what they do while installing...
 
-Iranges
-ggplot2
-broom
-Gviz
-ggdendro
-ggrepel
-pheatmap
-httr
-janitor
-purrr
-deseq2
+```{r}
+install.packages(c("Iranges", "ggplot2", "broom", "Gviz", "ggdendro","ggrepel", "pheatmap", "httr", "janitor", "purrr", "deseq2"))
+```
+
+
 
 # let's try this one -- maybe tricky:
 ggpubr
