@@ -38,7 +38,8 @@ We'll be using the consensus peaks we generated previously (MACS peak calls filt
 ```{r import genome features & file list}
 
 # loading in needed files from 01_peak_features
-load("../01_peak_features/results/peak_features.RData", verbose = T)
+load("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/01_peak_features/results/peak_features.RData", verbose = T)
+# saved environment from peak features 
 
 ```
 
@@ -71,7 +72,7 @@ In order to calculate what the peak coverage across each promoter is we'll conve
 ?coverage
 
 # creating a coverage object for HDAC2 ChIPseq consensus peaks
-peak_coverage <- coverage(consensus_peaks[["HDAC2"]]) 
+peak_coverage <- coverage(consensus_peaks[["HDAC2"]]) # turn everything into run length 
 
 
 View(peak_coverage)
@@ -91,7 +92,7 @@ This step will accomplish two things: filter out promoters that fall outside the
 ?elementNROWS
 # elementNROWs can calculate coverage in RLE
 # interpolates the number of zero's between two "1s" 
-coverage_length <- elementNROWS(peak_coverage)
+coverage_length <- elementNROWS(peak_coverage) # fill out 0's 
 
 # we just basically defined the length of each chromosome
 # named integer here are the components:
@@ -104,7 +105,7 @@ length(coverage_length)
 # we can use the coverage length ranges to 
 # filter the promoters falling outside of these boundaries:
 # basically turning coverage_lenth to GRanges
-coverage_gr <- GRanges(seqnames = names(coverage_length),
+coverage_gr <- GRanges(seqnames = names(coverage_length), # seq names for chromosomes 
                        IRanges(start = rep(1, length(coverage_length)), 
                                end = coverage_length))
 

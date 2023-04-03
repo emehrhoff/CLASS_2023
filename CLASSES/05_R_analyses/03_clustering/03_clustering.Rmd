@@ -14,9 +14,10 @@ library(tidyverse)
 library(ggdendro)
 library(GenomicRanges)
 
-# install.packages(pheatmap)
+install.packages("pheatmap")
 library(pheatmap)
 
+# correlate 0 and 1 vector and that tells cluster
 ```
 Accompanying Youtube Video:
 https://youtu.be/MH92yILbbuo
@@ -39,7 +40,7 @@ Ok let's get started by grabbing the peak_occurrence_matrix from 14_2_our_data_i
 
 #let's look at the promoter peak occurence matrix (takes a min to load)
 # read.table will make this a data.frame but will keep row names.
-promoter_peak_occurence_matrix <- read.table("../01_peak_features/results/lncrna_mrna_promoter_peak_occurence_matrix.tsv")
+promoter_peak_occurence_matrix <- read.table("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/results/lncrna_mrna_promoter_peak_occurence_matrix.tsv")
 
 # Converting to a matrix format for correlation analysis
 promoter_peak_occurence_matrix <- as.matrix(promoter_peak_occurence_matrix)
@@ -55,19 +56,19 @@ We will make a distance matrix of 437 x437 and then use that for clustering.
 
 # First let's take a look at the matrix
 # note the meta data
-promoter_peak_occurence_matrix[1:2,19:24]
+promoter_peak_occurence_matrix[1:2,19:24] # first 2 proteins (rows) 
 # let's see if there are row and column names:
 
 # row.names
 row.names(promoter_peak_occurence_matrix)
 # column names
-colnames(promoter_peak_occurence_matrix)
+colnames(promoter_peak_occurence_matrix) # all promoters all enseml id of what gene they are a promoter for 
 
 # now we can calculate the distance of DBP (we could also do this for promoters)
 # let's do a small test first as this can 10 min to calculate 451x451!
 
 # NOTE : Type of distance is important -- euclidean not good for binary measurements
-test <- dist(promoter_peak_occurence_matrix[1:2,], method = "euclidean")
+test <- dist(promoter_peak_occurence_matrix[1:2,], method = "euclidean") # basically the same as pearson
 test
 
 # There are a number of measures to calculate distance between two vectors and we can check those out in the documentation.
@@ -78,11 +79,12 @@ test
 # since this is a binary vector we will use a binary distance metric
 
 test2 <- dist(promoter_peak_occurence_matrix[1:2,], method = "binary")
-test2
+test2 # .97 very similar in binding pattern 
 
 # Now let's create distance matrix for each pairwise vector comparison for the whole matrix now.
 peak_occurence_dist <- dist(promoter_peak_occurence_matrix, method = "binary")
-peak_occurence_dist
+peak_occurence_dist # get higher corr if your protein isnt bound to proomters and has a lot of 0's
+# can correct using sparse
 ```
 
 # Clustering distance matrix
@@ -99,12 +101,15 @@ everything is in the same cluster.
 # Alright we are ready to cluster everything!
 bin_hier <- hclust(peak_occurence_dist, method = "complete")
 # that was incrediblty fast to get the correlation values !
+# distance of distances
 
 # we now can plot the information in bin_hier
-plot(bin_hier)
+plot(bin_hier) # pol2 and tf it needs would both be bound 
+# can see diustance on scale 
 
 # let's take a look at what we got and see distance distribution
-hist(bin_hier$height)
+hist(bin_hier$height) # 1 is very far/different from 0 (the furthest branch is 1)
+
 
 # To make this bigger, we can plot it as a pdf the syntax is:
 # pdf() tell file path to save and properties then we plot
@@ -204,7 +209,7 @@ ggdendro::ggdendrogram(bin_hier_lncrna, rotate = T,  size = 3)
 # Now let's save this figure
 ggsave("figures/lncrna_hclust_binary_dist.pdf", height = 49, width = 6)
 
-
+# although lcnrna less overlap with promoter tend to have similar binding profiles on lnc ad mrna
 ```
 
 # mRNA promter ggdendro
@@ -354,7 +359,7 @@ XIST_promoter <- promoter_dbps %>%
   filter(gene_name == "XIST")
 
 # seeing what's there :
-XIST_promoter
+XIST_promoter # only in XX to shut off one 
 # How many DBPs bound
 nrow(XIST_promoter)
 
