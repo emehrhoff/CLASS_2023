@@ -81,7 +81,7 @@ So one row will have many files in it -- similar to have a bunch of files in a s
 ```{r reading in sample sheet}
 
 # We'll also rename this Accession column to clarify between experiment_accession and file_accession.
-samples <- read.table("data/samples.txt",
+samples <- read.table("samples.txt",
                       sep = "\t", skip = 1, header = T) %>%
   dplyr::rename(experiment_accession = Accession) 
 
@@ -90,7 +90,7 @@ samples <- read.table("data/samples.txt",
 
 # If you don't already have the samples.txt you can get it here:
 
-# wget -O samples.txt "https://www.encodeproject.org/report.tsv?type=Experiment&status=released&assay_slims=Transcription&assay_slims=Transcription&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&biosample_ontology.term_name=HepG2&biosample_ontology.classification=cell+line&assay_title=total+RNA-seq&files.read_length=50&limit=all&advancedQuery=date_released:[2009-01-01%20TO%202021-12-31]"
+wget -O samples.txt "https://www.encodeproject.org/report.tsv?type=Experiment&status=released&assay_slims=Transcription&assay_slims=Transcription&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&biosample_ontology.term_name=HepG2&biosample_ontology.classification=cell+line&assay_title=total+RNA-seq&files.read_length=50&limit=all&advancedQuery=date_released:[2009-01-01%20TO%202021-12-31]" # to get metadata. run in terminla while in fastq working dirsecty 
 
 # sample site to get report:
 # https://www.encodeproject.org/matrix/?type=Experiment&control_type!=*&status=released&perturbed=false&assay_title=total+RNA-seq&replicates.library.biosample.donor.organism.scientific_name=Homo+sapiens&biosample_ontology.term_name=HepG2&files.run_type=paired-ended
@@ -117,7 +117,7 @@ samples <- samples %>%
   # the "experiment_acession" col will be read into encode_file_info function
   # ~ means pass the experiment_accession value into encode_file_info
   # (.x) is a generic symbol meaning pass what is in memory == experiment_accession
-  mutate(file_info = map(experiment_accession, ~ encode_file_info(.x)))
+  mutate(file_info = map(experiment_accession, ~ encode_file_info(.x))) #
 
 # Thus for each accession in experiment_accession mutate will use the function MAP
 # to map each experimental file to the "file_info" column and keep the data there.
@@ -324,7 +324,7 @@ samplesheet <- samplesheet %>%
 ```{bash }
 
 # navigate to this path:
-cd <your_folder>/CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/00_RNAseq_download_NF_core_pipeline
+cd erme3555/CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/00_RNAseq_download_NF_core_pipeline
 
 mkdir 00_NF_CORE_RNAseq_Pipeline_run
 
@@ -345,7 +345,7 @@ Let's create a sample column using mutate -- and we'll clean up the names
 # adding path to fastq files so NF_CORE knows where to get them
 base_path <- "/scratch/Shares/rinnclass/CLASS_2023/JR"
 fastq_path <- "CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/00_RNAseq_download_NF_core_pipeline/data/fastq2/"
-final_path <- c(file.path(base_path, fastq_path))
+final_path <- c(file.path("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/00_RNAseq_download_NF_core_pipeline/fastq"))
 
 # There's spaces in the names currently and we need to get rid of those.
 design <- samplesheet %>%

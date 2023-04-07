@@ -43,7 +43,7 @@ dbp provided and the ChIPseq peak coordinates!
 ```{r import genome features & file list}
 
 # loading in needed files from 01_peak_features
-load("../01_peak_features/results/peak_features.RData", verbose = T)
+load("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/01_peak_features/results/peak_features.RData", verbose = T)
 
 ```
 
@@ -95,7 +95,7 @@ test <- profile_tss(consensus_peaks[["HDAC2"]], lncrna_mrna_promoters)
 
 # Writting a for loop to calculate promoter coverage for all consensus_peaks:
 for(i in 1:length(consensus_peaks)) {
-  print(names(consensus_peaks)[[i]])
+  print(names(consensus_peaks)[[i]]) # print tells you what its doing 
   tmp_df <- profile_tss(consensus_peaks[[i]], lncrna_mrna_promoters)
   tmp_df$dbp <- names(consensus_peaks)[[i]]
   metaplot_df <- bind_rows(metaplot_df, tmp_df)
@@ -130,22 +130,25 @@ metaplot_df <- read_rds("results/metaplot_df_final.rds")
 metaplot_filtered_matrix <- metaplot_df %>% 
   pivot_wider(names_from = x, values_from = dens) %>%
   column_to_rownames("dbp") %>%
-  as.matrix()
+  as.matrix() # need for correlation
 
 # Let's see how many have NA values
-table(rowSums(is.na(metaplot_filtered_matrix)))
+table(rowSums(is.na(metaplot_filtered_matrix))) # 7 rows and no NAs
 
 # If there are any NAs Let's filter out those is.na
 # metaplot_filtered_matrix <- metaplot_filtered_matrix[rowSums(is.na(metaplot_filtered_matrix)) == 0,]
 
 # Z-Scale the rows for clustering (not needed for profile plots)
-mm_scaled <- t(scale(t(metaplot_filtered_matrix)))
+mm_scaled <- t(scale(t(metaplot_filtered_matrix))) # turn rows to column to be able to do distribtuion 
+# Mean based 
+# flip back in to rows after 
 
 # clustering
 metaplot_hclust <- hclust(dist(mm_scaled), method = "complete")
 
 # plotting
 plot(metaplot_hclust)
+# relationship between profiles
 
 # Plot the dendrogram
 pdf("figures/tss_profile_dendrogram.pdf", height = 10, width = 27)
@@ -260,7 +263,7 @@ ggplot(combined_metaplot_profile,
        aes(x = x, y = dens, color = gene_type )) +
   geom_vline(xintercept = 0, lty = 2) + 
   geom_line(size = 1.5) + 
-  facet_wrap(dbp ~ ., scales = "free_y") +
+  facet_wrap(dbp ~ ., scales = "free_y") + # y axis diff for each dbp
   
   
   ggtitle("Combined Promoter Metaplot") + 
@@ -270,6 +273,7 @@ ggplot(combined_metaplot_profile,
   ylab("Peak frequency") +
   scale_color_manual(values = c("#424242","#a8404c"))
 
+# more density for mrna 
 ```
 Result: H3K27me3 looks almost inverse between lncrna and mrna
 Result: Most look similar on lncrna and mrna promoters - 
