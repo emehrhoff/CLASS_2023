@@ -108,6 +108,9 @@ samplesheet[which(samplesheet$sample_name == "homo_sapiens_hepg2_insoluble_cytop
 # saving this to sample_sheets folder
 write.csv(samplesheet, "results/corrected_samplesheet.csv")
 
+# pull back in
+samplesheet <- read_csv("corrected_samplesheet.csv")
+
 ```
 
 # Loading in Gencode annotations & making gene_id to gene_symbol object 
@@ -157,6 +160,7 @@ https://salmon.readthedocs.io/en/latest/file_formats.html
 counts <- read_csv("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/00_RNAseq_download_NF_core_pipeline/00_NF_CORE_RNAseq_Pipeline_run/results/salmon/salmon_merged_gene_counts.csv")
 
 # adding rownames and converting to a matrix
+# push to meta column
 counts <- column_to_rownames(counts, "gene_id") %>%
 as.matrix()
   
@@ -171,6 +175,7 @@ samples. They are normalized by expression quantile to prevent low abundance
 transcripts from inflating data. 
 
 ```{R sub-selecting counts_matrix to data only in samplesheet }
+# THIS MAKES SURE THEY MATCH
 
 # First let's put the counts columns in the same order as the samplesheet
 # If they are not then we would essentially be randomizing our data later!!
@@ -199,11 +204,13 @@ DeSeq needs things like:
 counts <- round(counts)
 
 # now we want to get rid of all genes with 0 across all samples.
+# too many 0 will bias normalization 
 counts_filtered <- counts[rowSums(counts) > 1,]
 
 # In order to cache this and read it in later we'll
 # save it as an RDS
 write_rds(counts_filtered, "results/counts_matrix.rds")
+# R data structure 
 
 ```
 
@@ -273,6 +280,11 @@ rlog_counts_matrix <- assay(rlog_counts)
 # Now we can write this out and START from here in the future.
 # create new folder 'rlog_count_matrices'
 write_rds(rlog_counts_matrix, "results/rlog_counts_all.rds")
+
+# notes on noramlization
+# need to normalize bc low values more variance
+# shift data to the right
+#
 
 ```
 

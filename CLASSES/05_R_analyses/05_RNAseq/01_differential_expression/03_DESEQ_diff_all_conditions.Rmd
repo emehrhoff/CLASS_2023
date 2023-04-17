@@ -13,7 +13,7 @@ options(stringsAsFactors = FALSE)
 library(tidyverse)
 library(pheatmap)
 library(DESeq2)
-# install.packages("ggrepel")
+#install.packages("ggrepel")
 library(ggrepel)
 source("../../../../util/_setup.R")
 
@@ -38,7 +38,7 @@ load("results/DESEQ_RLOG.RData", verbose = T)
 # We will use total RNA (whole cell) condition to compare everything back to.
 # we will want to set the factor levels with "total" first
 
-samplesheet$condition <- factor(samplesheet$condition, levels = c("homo_sapiens_hepg2", "homo_sapiens_membrane_fraction", "homo_sapiens_insoluble_cytoplasmic_fraction", "homo_sapiens_cytosolic_fraction", "homo_sapiens_nuclear_fraction"))
+samplesheet$condition <- factor(samplesheet$condition, levels = c("homo_sapiens", "homo_sapiens_membrane_fraction", "homo_sapiens_insoluble_cytoplasmic_fraction", "homo_sapiens_cytosolic_fraction", "homo_sapiens_nuclear_fraction")) # first one is "control"
 
 
 # creating dds based on the factors above
@@ -63,7 +63,7 @@ resultsNames(dds)
 # all comparisions are in our dds so we can select one at a time.
 
 # Let's just look at one of the results
-res <- results(dds, name = "condition_homo_sapiens_membrane_fraction_vs_homo_sapiens_hepg2")
+res <- results(dds, name = "condition_homo_sapiens_membrane_fraction_vs_homo_sapiens")
 
 # We can further index the information for just this sample:
 res_df <- res %>% as.data.frame() %>%
