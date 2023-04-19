@@ -49,8 +49,8 @@ load("results/DESEQ_RLOG.RData", verbose = T)
 Let's specialize sample sheet we can use to compare nuc/cyto samples.
 ```{R nuclear and cytoplasmic samplesheet}
 # remove rep from coniditon before doing rest
-samplesheet$condition <- str_sub(samplesheet$condition, end=-4)
-samplesheet <- samplesheet[-1]
+#samplesheet$condition <- str_sub(samplesheet$condition, end=-4)
+#samplesheet <- samplesheet[-1]
 
 # Now we will filter the sample sheet to just nuclear and cytoplasmic
 samplesheet_nuc_cyto <- samplesheet %>%

@@ -28,7 +28,7 @@ Let's get started by loading in our chipseq data
 
 ```{r loading in chipseq data}
 
-load("../01_peak_features/results/peak_features.RData", verbose = T)
+load("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/01_peak_features/results/peak_features.RData", verbose = T)
 
 ```
 
@@ -38,8 +38,9 @@ Next we want to load in our final_samplesheet from 01_DESEQ_counts.Rmd
 ```{r read in sample_sheet}
 
 # First let's read in the sample sheet to know what is what
-samplesheet <- read_rds("../05_RNAseq/01_differential_expression/results/final_samplesheet.rds")
+#samplesheet <- read_rds("../05_RNAseq/01_differential_expression/results/final_samplesheet.rds")
 
+load("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/01_differential_expression/results/DESEQ_RLOG.RData", verbose = T)
 ```
 
 # reading in TPM values from Salmon for our analyses
@@ -66,13 +67,14 @@ Now let's read in the TPMs from salmon
 
 # reading in salmon counts TPM (from NF_COR_pipeline)
 
-salmon_tpm <- read.csv("../05_RNAseq/00_RNAseq_download_NF_core_pipeline/00_NF_CORE_RNAseq_Pipeline_run/results/salmon/salmon_merged_gene_tpm.csv")
+salmon_tpm <- read.csv("/scratch/Shares/rinnclass/CLASS_2023/JR/CLASS_2023/CLASSES/05_R_analyses/05_RNAseq/00_RNAseq_download_NF_core_pipeline/00_NF_CORE_RNAseq_Pipeline_run/results/salmon/salmon_merged_gene_tpm.csv")
 # salmon_tpm <- column_to_rownames(salmon_tpm, "gene_id")
 
 # since we have replicates we will take the mean TPM for each fractionation.
 # while we are at it we will add more intuitive row and col names 
 # finally we are making sure the TPM table is in same order as samplesheet
 
+# TO GET AVERAGE FOR TPM ACROSS REPLCIATES
 tpm <- salmon_tpm %>% 
   # pivot longer here is going to take cols 2 through the rest (the samples conditions)
   # So each gene will have 10 rows with the sample_id = experiment name/condition
@@ -85,8 +87,9 @@ tpm <- salmon_tpm %>%
   group_by(gene_id, condition) %>%
   # taking the mean by using summarize function (this is the mean of 2 res in each condition)
   summarize(tpm = mean(tpm, na.rm = T)) %>%
-  pivot_wider(names_from = condition, values_from = tpm, names_prefix = "tpm_")
-  merge(samplesheet) %>%
+  pivot_wider(names_from = condition, values_from = tpm, names_prefix = "tpm_") 
+
+  #merge(samplesheet) 
   
   # bringing the table back to "normal" with pivot wider
   # the condition will be come the cols with names_from = with a prefix tpm_condition name
@@ -103,12 +106,12 @@ how many DBPs are bound at each promoter
 ```{r loading in peak features data frame }
 
 # peak_occurence_df is loaded in our environment and contains how many DBPs bind to each promoter (rows)
-peak_occurence_df <- read_csv("../01_peak_features/results/num_peaks_df.csv")
+peak_occurence_df <- read_csv("../01_peak_features/results/peak_occurence_dataframe.csv")
 View(peak_occurence_df)
 
 # Now we can merge in the TPM data to this data.frame
 # This will merge on the on teh gene_id column
-promoter_features_df <- merge(peak_occurence_df, tpm)
+promoter_features_df <- merge(peak_occurence_df, tpm) # by gene.id 
 
 # saving this file
 write.csv(promoter_features_df, "results/promoter_feature_df_tpm.csv")
@@ -172,14 +175,14 @@ Let's see if this holds for our current subset of DBPs
 # y-axis total RNA TPM (+0.0001 to avoid 0 issues)
        # x-axis is number of DBPs
 ggplot(promoter_features_df, 
-            aes(y = log2(tpm_homo_sapiens_hepg2 + 0.001), x = number_of_dbp, color = gene_type)) + 
-geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens_hepg2 > 0.001),
+            aes(y = log2(tpm_homo_sapiens + 0.001), x = number_of_dbp, color = gene_type)) + 
+geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens > 0.001),
              shape = 17, alpha = 0.7) +
   
   # Adding a generative additive model 
   geom_smooth(method = 'gam', formula = y ~ s(x, bs = "cs")) +
   # this adds the statistics from the gam to the figure
-  stat_cor() +
+  #stat_cor() +
   geom_smooth(method = "lm") +
   # this is just to make it look nice.
   scale_x_continuous(expand = c(0,0)) +
