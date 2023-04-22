@@ -15,7 +15,7 @@ library(GenomicRanges)
 source("../../util/my_class_functions.R")
 
 # filepath to import peaks
-basepath <- "/scratch/Shares/rinnclass/CLASS_2023/<your_folder>"
+basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
 peak_path <- "CLASS_2023/CLASSES/05_R_analyses/analysis/00_consensus_peaks"
 broadpeakfilepath <- "/scratch/Shares/rinnclass/CLASS_2023/data/data/peaks"
 ```
@@ -41,7 +41,7 @@ and dbp object. This will be done in 2 steps
   # Creating unique DBP object for create_consensus_peaks_from_reduced
 dbp <- unique(sapply(names(peak_list), function(x) {
    unlist(strsplit(x, "_"))[1]
-}))
+})) # remove replicate number
 
 # now run our function consensus_from_reduced
 consensus_list <- lapply(dbp, consensus_from_reduced, peak_list)
@@ -53,12 +53,13 @@ save(consensus_list, file = "results/consensus_list.RData")
 
 load("results/consensus_list.RData", verbose = T)
 ```
+There are 486 proteins.
 
 # exploring the number of peaks in the consensus_list
 ```{r exploring number of peaks in consenus peaks}
 
 # creating list of num_peaks per dbp
-num_peaks <- sapply(consensus_list, length)
+num_peaks <- sapply(consensus_list, length) # vector of number of peaks for each protein
 
 # plotting
 hist(num_peaks, breaks = 1000)
@@ -86,6 +87,7 @@ lost_dbps <- names(consensus_list[sapply(consensus_list, length) < 1000]) %>% as
 write.table(lost_dbps, "results/lost_dbps.csv")
 
 ```
+Filtered now only has 430 files.
 
 # exporting filtered_consensus_peaks
 ```{r exporting filtered consensus peaks}
@@ -97,8 +99,44 @@ for(i in 1:length(filtered_consensus_list)) {
                              "_filtered_consensus_peaks.bed"))
 }
 
+#Warning message:
+#In df$blockStarts <- blockStarts :
+  #closing unused connection 3 (results/filtered_consensus_peaks/ADNP_filtered_consensus_peaks.bed)
+
 #TODO rename so can load into UCSC.
 
+# list consensus bed file names
+consensus_file_list <- list.files("/scratch/Shares/rinnclass/CLASS_2023/erme3555/CLASS_2023/CLASSES/06_final_going_global/analysis/01_create_consensus_peaks/results/filtered_consensus_peaks", full.names = T, pattern = ".bed")
+
+# lapply (for loop) across consensus file list to import and add colnames
+# The actual col names for .broadPeak are: chr, start, end, name, score, strand
+peaks <- lapply(consensus_file_list, read.table, col.names = c("chr", "start", "end", "name", "score", "strand"))
+
+names(peaks) <- names(filtered_consensus_list)
+
+# make chromosomes of interest object
+canonical_chr <- c(paste0("chr", 1:22), "chrM", "chrX", "chrY")
+
+# let's use lapply with filter funciton to cannonical_chr
+peaks <- lapply(peaks, function(x) x %>% filter(chr %in% canonical_chr))
+
+# ucsc is picky for naming 
+headers <- paste0("track type=bedGraph name=", names(peaks)) # type could be bigwig 
+headers
+
+# creating a path to export after we add header in for loop below
+new_filenames <- paste0("results/ucsc_consensus_peaks/", names(peaks), ".bed")
+new_filenames
+
+for(i in 1:length(peaks)) {
+  # Write the header line
+  writeLines(headers[[i]], new_filenames[[i]])
+  # Append the broadPeak table data
+  
+  write.table(peaks[[i]], new_filenames[[i]],
+              sep = "\t", col.names = FALSE, row.names = FALSE,
+              quote = FALSE, append = TRUE)
+}
 
 ```
 
@@ -183,11 +221,15 @@ num_peaks_df$peaks_overlapping_mrna_genebody <- rowSums(genebody_peak_counts[,mr
 ```{r adding TF features to num_peaks_df}
 
 # download TF annotations to results
-url <- "https://www.cell.com/cms/10.1016/j.cell.2018.01.029/attachment/ede37821-fd6f-41b7-9a0e-9d5410855ae6/mmc2.xlsx"
+#url <- "https://www.cell.com/cms/10.1016/j.cell.2018.01.029/attachment/ede37821-fd6f-41b7-9a0e-9d5410855ae6/mmc2.xlsx"
 destination_for_url <- "results/TF_annotations.xlsx"
 
 # to download we can use download.file
-download.file(url, destination_for_url)
+#download.file(url, destination_for_url)
+
+# Error in download.file(url, destination_for_url) : cannot open URL
+#HTTP status was '403 Forbidden'
+# just copied it from when we orginally downloaded it 
 
 # reading in TF annotations 
 human_tfs <- readxl::read_excel("results/TF_annotations.xlsx",
@@ -197,7 +239,7 @@ human_tfs <- readxl::read_excel("results/TF_annotations.xlsx",
 names(human_tfs)[4] <- "is_tf"
 
 # now let's intersect gene names that are in our ChIP data and has TF identity.
-length(which(tolower(num_peaks_df$dbp) %in% tolower(human_tfs$dbp)))
+length(which(tolower(num_peaks_df$dbp) %in% tolower(human_tfs$Name)))
 # 407 of the 430 have matching gene_names - not bad
 
 human_tfs <- human_tfs[tolower(human_tfs$Name) %in% tolower(num_peaks_df$dbp), 1:4]
@@ -219,7 +261,7 @@ This will make a matrix where promoters are cols (30K)
 Each will have 1 if overlapped by a given dbp : 0 if no overlaps
 
 ```{r promoter peak occurence matrix}
-
+# 430 36814
 # running count_peaks_per_feature
 promoter_peak_occurence <- count_peaks_per_feature(lncrna_mrna_promoters, filtered_consensus_list, 
                                                type = "occurrence")
