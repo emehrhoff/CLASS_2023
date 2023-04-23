@@ -17,7 +17,8 @@ library(pheatmap)
 library(ComplexHeatmap)
 source("../../util/my_class_functions.R")
 source("../../util/_setup.R")
-install.packages("colorRamps")
+#install.packages("colorRamps")
+library(colorRamps)
 
 ```
 
@@ -32,7 +33,7 @@ load("../01_create_consensus_peaks/results/peak_features.RData", verbose = T)
 ```{r distance matrix and dendrogram}
 
 # creating distance matrix
-peak_occurence_dist <- dist(promoter_peak_occurence_matrix, method = "binary")
+peak_occurence_dist <- dist(promoter_peak_occurrence_matrix, method = "binary") # genes as columns and rows are dbps. 1 for bound 
 
 # clustering distance values
 bin_hier <- hclust(peak_occurence_dist, method = "complete")
@@ -56,7 +57,7 @@ ggdendro::ggdendrogram(bin_hier, rotate = FALSE,  size = 3,
      panel.border = element_blank()
    )
 
-ggsave("figures/promoter_overlap_dendrogram")
+ggsave("figures/promoter_overlap_dendrogram.pdf")
 
 ```
 
@@ -70,7 +71,10 @@ metaplot_df <- data.frame(x = integer(), dens = numeric(), dbp = character())
 # for loop to populate DF 
 for(i in 1:length(filtered_consensus_list)) {
   print(names(filtered_consensus_list)[[i]])
-  tmp_df <- profile_tss(filtered_consensus_list[[i]], lncrna_mrna_promoters)
+  tmp_df <- profile_tss(filtered_consensus_list[[i]], lncrna_mrna_promoters) #takes a promoter window of your choosing
+# Then it will take a peak file and find the overlaps of 
+# all peaks in that window. It will provide a matrix of 
+# 1 (overlapped window) or (0 for no overlap)
   tmp_df$dbp <- names(filtered_consensus_list)[[i]]
   metaplot_df <- bind_rows(metaplot_df, tmp_df)
   
@@ -99,6 +103,8 @@ par(cex=0.3)
 plot(metaplot_hclust)
 dev.off()
 ```
+# H3K36me3 very different from other dbp
+
 
 # heat map of binding profile over +/- 1kb TSS window
 ```{r heatmap of profile over TSS (+/- 1Kb)}

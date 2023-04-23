@@ -36,7 +36,7 @@ load("../01_create_consensus_peaks/results/peak_features.RData", verbose = T)
 ggsave("figures/num_peaks_hist.pdf")
 
 ```
-
+Most DSP have less than 5000 peaks.
 
 # plotting num_peaks versus genome coverage.
 ```{r peaks vs coverage}
@@ -70,18 +70,19 @@ ggplot(num_peaks_df,
   geom_abline(slope = 1, linetype="dashed") +
   geom_smooth(method = "lm", se=FALSE, formula = 'y ~ x',
               color = "#a8404c") +
-  stat_regline_equation(label.x = 35000, label.y = 18000) +
+  #stat_regline_equation(label.x = 35000, label.y = 18000) + # cant use without ggpubr
   ylim(0,60100) +
   xlim(0,60100)
 
 ggsave("figures/peak_num_vs_promoter_coverage.pdf")
 
-# w
 # peaks you stop increaseing binding to promoters.
 # maybe it leaks into the gene body let's check
 ```
 Result: saturation of binding events -- as you get more peaks 
 you stop increasing binding to promoters -- probably saturated.
+
+The number of promoters bound tapers off before 2000 peaks.
 
 # peak Coverage on gene bodies
 ```{r peak coverage on gene bodies}
@@ -95,7 +96,7 @@ ggplot(num_peaks_df,
   geom_abline(slope = 1, linetype="dashed") +
   geom_smooth(method = "lm", se=F, formula = 'y ~ x',
               color = "#a8404c") +
-  stat_regline_equation(label.x = 35000, label.y = 18000) +
+  #stat_regline_equation(label.x = 35000, label.y = 18000) +
   ylim(0,60100) +
   xlim(0,60100)
 
@@ -112,6 +113,7 @@ Let's make a density plot of num DBPs bound per promoter
 
 ```{r density plot of DBP localization events}
 
+# the number of DBP bound to gene 
 ggplot(peak_occurence_df, aes(x = number_of_dbp)) +
 geom_density(alpha = 0.2, color = "#424242", fill = "#424242") +
   theme_paperwhite() +
@@ -139,6 +141,7 @@ unbound_promoters <- peak_occurence_df %>%
 # how many are there?
 nrow(unbound_promoters)
 # so there are only a few 6,720 promoters that don't have binding evetns (~10%)
+# I got 9448
 
 #  let's put it in a folder called results. We will always use this folder structure
 write_csv(unbound_promoters, "results/unbound_promoters.csv")
@@ -152,8 +155,8 @@ Let's compare the binding patterns of lncRNA vs mRNA promoters.
 ggplot(num_peaks_df, aes(x = num_peaks)) +
   geom_point(aes(y = peaks_overlapping_lncrna_promoters), color = "red") +
   geom_point(aes(y = peaks_overlapping_mrna_promoters), color = "black") +
-  stat_regline_equation(aes(y = peaks_overlapping_lncrna_promoters), color = "red") +
-  stat_regline_equation(aes(y = peaks_overlapping_mrna_promoters), color = "black", label.y = 20000) +
+  #stat_regline_equation(aes(y = peaks_overlapping_lncrna_promoters), color = "red") +
+  #stat_regline_equation(aes(y = peaks_overlapping_mrna_promoters), color = "black", label.y = 20000) +
   geom_smooth(aes(y = peaks_overlapping_lncrna_promoters), method = "lm", se = FALSE, formula = "y ~ x") +
   geom_smooth(aes(y = peaks_overlapping_mrna_promoters), method = "lm", se = FALSE, formula = "y ~ x")
 
@@ -176,7 +179,7 @@ ggplot(num_peaks_dfl, aes(x = num_peaks, y = peaks_overlapping_promoters,
          geom_point() +
          geom_abline(slope = 1, linetype="dashed") +
   geom_smooth(method = "lm", se = FALSE, formula = "y ~ x") +
-  stat_regline_equation() +
+  #stat_regline_equation() +
   scale_color_manual(values = c("#a8404c", "#424242"))+
   xlab("Peaks per DBP") +
   ylab("Peaks Overlapping Promoters") +
@@ -187,7 +190,7 @@ ggsave("figures/peaks_overlaps_relationship_by_gene_type.pdf", height = 5, width
 
 
 ```
-
+Result: More DBP bind mRNA promoters than lncRNA promoters. The lncRNA promoter binding has a steeper slope than mRNA promoter binding. 
 
 
 
