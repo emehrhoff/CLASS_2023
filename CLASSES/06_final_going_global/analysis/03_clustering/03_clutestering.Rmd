@@ -265,7 +265,7 @@ write_rds(mrna_metaplot_df, "results/metaplot_df_final.rds")
 ggplot(combined_metaplot_profile, 
        aes(x = x, y = dens, color = gene_type )) +
   geom_vline(xintercept = 0, lty = 2) + 
-  geom_line(size = 1.5) + 
+  geom_line(linewidth = 1.5) + 
   facet_wrap(dbp ~ ., scales = "free_y") +
   ggtitle("Promoter Metaplot") + 
   scale_x_continuous(breaks = c(-1000, 0, 1000),
@@ -273,6 +273,8 @@ ggplot(combined_metaplot_profile,
                      name = "") + 
   ylab("Peak frequency") +
  scale_color_manual(values = c("#424242","#a8404c"))
+
+
 
 # saving
 ggsave("figures/mega_meta_plot_lncRNA-mRNA.pdf", width = 49, height = 12)

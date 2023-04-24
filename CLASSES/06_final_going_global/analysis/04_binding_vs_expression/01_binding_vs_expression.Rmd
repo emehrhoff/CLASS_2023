@@ -14,13 +14,13 @@ library(tidyverse)
 library(GenomicRanges)
 source("../../../../util/intersect_functions.R")
 source("../../../../util/_setup.R")
-library(ggpubr)
+#library(ggpubr)
 ```
 
 # load in chipseq data from analysis/01_peak_feautres
 
 ```{r loading in chipseq data}
-load("../01_peak_features/results/peak_features.RData", verbose = T)
+load("../01_create_consensus_peaks/results/peak_features.RData", verbose = T)
 ```
 
 Next we want to load in our final_samplesheet from 01_DESEQ_counts.Rmd
@@ -29,6 +29,9 @@ Next we want to load in our final_samplesheet from 01_DESEQ_counts.Rmd
 ```{r read in sample_sheet}
 # First let's read in the sample sheet to know what is what
 samplesheet <- read_rds("../../../05_R_analyses/05_RNAseq/01_differential_expression/results/final_samplesheet.rds")
+
+# need to remove replicate?
+samplesheet$condition <- str_sub(samplesheet$condition, end=-4)
 ```
 
 # reading in TPM values from Salmon for our analyses
@@ -69,7 +72,7 @@ graphics.off()
 
 ```
 RESULT: 
-(1) Most RNAs are abundant in the nucleus
+(1) Most RNAs are abundant in the nucleus (big block of darker red)
 (2) Some RNAs expressed in total that are not in other fractions
 
 
@@ -80,14 +83,19 @@ We have published previously that the more binding
 events at a promoter the more abundant the expression is.
 Let's see if this holds for our current subset of DBPs
 ```{r DBP promoter binding versus total RNA expression}
+# added this in to create promoter features df
+promoter_features_df <- merge(peak_occurence_df, tpm) # by gene.id 
+
+# saving this file
+write.csv(promoter_features_df, "results/promoter_feature_df_tpm.csv")
 
 # plotting binding vs total RNA expression
 ggplot(promoter_features_df, 
-            aes(y = log2(tpm_homo_sapiens_hepg2 + 0.001), x = number_of_dbp, color = gene_type)) + 
-geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens_hepg2 > 0.001),
+            aes(y = log2(tpm_homo_sapiens + 0.001), x = number_of_dbp, color = gene_type)) + 
+geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens > 0.001),
              shape = 17, alpha = 0.7) +
   geom_smooth(method = 'gam', formula = y ~ s(x, bs = "cs")) +
-  stat_cor() +
+  #stat_cor() +
   geom_smooth(method = "lm") +
   
   
@@ -109,13 +117,13 @@ Result:
 Let's see if the binding versus expression holds in the nuclear fraction
 ```{r binding versus nuclear expression}
 
-# Now let's make a similar plot for nuclear RNA abundance versus #DBPs bound to their promoter
+# Now let's make a similar plot for nuclear RNA abundance versus DBPs bound to their promoter
 ggplot(promoter_features_df, 
             aes(y = log2(tpm_homo_sapiens_nuclear_fraction + 0.001), x = number_of_dbp, color = gene_type)) + 
   geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens_nuclear_fraction > 0.001),
              shape = 17, alpha = 0.7) +
   geom_smooth(method = 'gam', formula = y ~ s(x, bs = "cs")) +
-  stat_cor() +
+  #stat_cor() +
   
   
   #making look nice
@@ -142,7 +150,7 @@ ggplot(promoter_features_df,
   geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens_cytosolic_fraction > 0.001),
              shape = 17, alpha = 0.7) +
   geom_smooth(method = 'gam', formula = y ~ s(x, bs = "cs")) +
-  stat_cor() +
+  #stat_cor() +
   
   
   # making look nice
@@ -166,7 +174,7 @@ Next we will directly test the lncRNA vs mRNA expression levels in total RNA.
 ```{r determining lncRNA and mRNA expression levels in total RNA}
 
 # plotting
-ggplot(promoter_features_df, aes(x = log2(tpm_homo_sapiens_hepg2 + 0.01), color = gene_type))+
+ggplot(promoter_features_df, aes(x = log2(tpm_homo_sapiens + 0.01), color = gene_type))+
   geom_density()
 
 # saving figure
@@ -197,8 +205,8 @@ Based on this we next wanted to identify the 'reservoirs' in hepG2 cells.
 
 # first we will use a cutoff of 5 DBPs.
 promoter_features_df$hepg2_reservoir <- 
-  as.numeric(promoter_features_df$number_of_dbp > 5 & 
-               promoter_features_df$tpm_homo_sapiens_hepg2 < 0.001)
+  as.numeric(promoter_features_df$number_of_dbp > 5 & # lot of dbps bound
+               promoter_features_df$tpm_homo_sapiens < 0.001) # low expression 
 
 # seeing what we got with table
 table(promoter_features_df$hepg2_reservoir)
@@ -234,9 +242,9 @@ write_csv(k562_df,"results/k562_df.csv")
 
 # renaming promoter_features_df to hepg2_df
 hepg2_df <- promoter_features_df %>%
-  dplyr::select(gene_id, gene_name, tpm_homo_sapiens_hepg2, tpm_homo_sapiens_cytosolic_fraction, tpm_homo_sapiens_nuclear_fraction, tpm_homo_sapiens_insoluble_cytoplasmic_fraction, tpm_homo_sapiens_membrane_fraction, number_of_dbp, hepg2_reservoir) %>%
+  dplyr::select(gene_id, gene_name, tpm_homo_sapiens, tpm_homo_sapiens_cytosolic_fraction, tpm_homo_sapiens_nuclear_fraction, tpm_homo_sapiens_insoluble_cytoplasmic_fraction, tpm_homo_sapiens_membrane_fraction, number_of_dbp, hepg2_reservoir) %>%
    
-  dplyr::rename( tpm_total = tpm_homo_sapiens_hepg2,
+  dplyr::rename( tpm_total = tpm_homo_sapiens,
                  tpm_cytosolic_fraction =  tpm_homo_sapiens_cytosolic_fraction,
                  tpm_nuclear_fraction = tpm_homo_sapiens_nuclear_fraction ,
                  tpm_insoluble_cytoplasmic_fraction = tpm_homo_sapiens_insoluble_cytoplasmic_fraction ,
