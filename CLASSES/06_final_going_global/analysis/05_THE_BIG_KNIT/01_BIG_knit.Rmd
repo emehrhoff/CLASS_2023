@@ -674,7 +674,7 @@ ggplot(combined_metaplot_profile,
  scale_color_manual(values = c("#424242","#a8404c"))
 
 # saving
-ggsave("figures/mega_meta_plot_lncRNA-mRNA.pdf", width = 49, height = 12)
+ggsave("figures/mega_meta_plxot_lncRNA-mRNA.pdf", width = 49, height = 12)
 
 ```
 Result: 
