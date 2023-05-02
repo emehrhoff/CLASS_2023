@@ -1,41 +1,30 @@
----
-title: "Erika_Final_Project"
-author: "Erika Mehrhoff"
-date: "4/24/2023"
-output: github_document
-editor_options: 
-  chunk_output_type: console
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
-knitr::opts_chunk$set(echo = TRUE)
-#library(Gviz)
-#library(ggpubr)
-library(ggplot2)
-library(tidyverse)
-library(GenomicRanges)
-#library(ComplexHeatmap)
-library(circlize)
-library(colorRamps)
-source("../../../../util/my_class_functions.R")
-source("../../../../util/_setup.R")
-load("results/needed_data.RData", verbose = T)
-```
+Erika\_Final\_Project
+================
+Erika Mehrhoff
+4/24/2023
 
 ## Goal:
 
-Here we aim to download all available DNA binding protein (DBP) profiles in a single cell state (measured by ChIP-seq). This will allow us to investigate the binding properties of hundreds of DBPs in the same cellular context or background. We have curated a set of over 1,000 ChIPseq data sets comprised of 48 DBPs in HEPG2 cells from the ENCODE consortium. We required duplicate ChIP-seq experiments for a given DBP and other criterion that can be found here:
+Here we aim to download all available DNA binding protein (DBP) profiles
+in a single cell state (measured by ChIP-seq). This will allow us to
+investigate the binding properties of hundreds of DBPs in the same
+cellular context or background. We have curated a set of over 1,000
+ChIPseq data sets comprised of 48 DBPs in HEPG2 cells from the ENCODE
+consortium. We required duplicate ChIP-seq experiments for a given DBP
+and other criterion that can be found here:
 
 <https://www.encodeproject.org/report/?type=Experiment&status=released&assay_slims=DNA+binding&biosample_ontology.term_name=HepG2&assay_title=TF+ChIP-seq&biosample_ontology.classification=cell+line&files.read_length=100&files.read_length=76&files.read_length=75&files.read_length=36&assay_title=Control+ChIP-seq&assay_title=Histone+ChIP-seq&files.run_type=single-ended>
 
 ### These samples were selected on the following criteria:
 
-1)  "chromatin" interaction data, then DNA binding data, cell line HEPG2, "TF-Chip-seq".
-2)  We further selected "TF Chip-seq", "Control chip-seq" and "Histone Chip-seq".
-3)  We selected several read lengths to get the most DNA binding proteins (DBPs)
-4)  Read lengths: 100, 76, 75, 36
-5)  ONLY SINGLE END READS (this eliminates 54 samples)
+1.  “chromatin” interaction data, then DNA binding data, cell line
+    HEPG2, “TF-Chip-seq”.
+2.  We further selected “TF Chip-seq”, “Control chip-seq” and “Histone
+    Chip-seq”.
+3.  We selected several read lengths to get the most DNA binding
+    proteins (DBPs)
+4.  Read lengths: 100, 76, 75, 36
+5.  ONLY SINGLE END READS (this eliminates 54 samples)
 
 ### Experimental data was downloading by (ENCODE report.tsv):
 
@@ -43,24 +32,27 @@ Here we aim to download all available DNA binding protein (DBP) profiles in a si
 
 ### The FASTQ files were downloaded with:
 
-"<https://www.encodeproject.org/metadata/?status=released&assay_slims=DNA+binding&biosample_ontology.term_name=HepG2&assay_title=TF+ChIP-seq&biosample_ontology.classification=cell+line&files.read_length=100&files.read_length=76&files.read_length=75&files.read_length=36&assay_title=Control+ChIP-seq&assay_title=Histone+ChIP-seq&files.run_type=single-ended&type=Experiment>"
+“<https://www.encodeproject.org/metadata/?status=released&assay_slims=DNA+binding&biosample_ontology.term_name=HepG2&assay_title=TF+ChIP-seq&biosample_ontology.classification=cell+line&files.read_length=100&files.read_length=76&files.read_length=75&files.read_length=36&assay_title=Control+ChIP-seq&assay_title=Histone+ChIP-seq&files.run_type=single-ended&type=Experiment>”
 
-MD5sums were checked with all passing (see encode_file_info function to reterive MD5Sum values that are not available from the encode portal (/util)
+MD5sums were checked with all passing (see encode\_file\_info function
+to reterive MD5Sum values that are not available from the encode portal
+(/util)
 
 ### Processing data:
 
-We processed all the read alignments and peak calling using the NF_CORE ChIP-seq pipeline: (nfcore/chipseq v1.2.2)
+We processed all the read alignments and peak calling using the NF\_CORE
+ChIP-seq pipeline: (nfcore/chipseq v1.2.2)
 
 ### All subequent analyses are contained within this document.
 
 You will find all the .broadPeak peak files here:
-/scratch/Shares/rinnclass/CLASS_2023/data/data/peaks
+/scratch/Shares/rinnclass/CLASS\_2023/data/data/peaks
 
-
-## First I want to analyze the large data for general properties 
+## First I want to analyze the large data for general properties
 
 ### Import broad peak files and find consensus peaks between replicates
-```{r}
+
+``` r
 # filepath to import peaks
 #basepath <- "/scratch/Shares/rinnclass/CLASS_2023/erme3555"
 #peak_path <- "CLASS_2023/CLASSES/05_R_analyses/analysis/00_consensus_peaks"
@@ -103,11 +95,19 @@ You will find all the .broadPeak peak files here:
                              #"_filtered_consensus_peaks.bed"))
 #}
 ```
-### Results: 
-Our strategy was to take peaks in each replicate and find all overlapping peak windows. We then took the union length of the overlapping range in each peak window. We further required that a DBP has at least 1,000 peaks (the min quartile of peaks observed). We started with chip data on 486 DNA binding proteins and ended up with 430 DBPs that have at least 1,000 peaks in both replicates. 
+
+### Results:
+
+Our strategy was to take peaks in each replicate and find all
+overlapping peak windows. We then took the union length of the
+overlapping range in each peak window. We further required that a DBP
+has at least 1,000 peaks (the min quartile of peaks observed). We
+started with chip data on 486 DNA binding proteins and ended up with 430
+DBPs that have at least 1,000 peaks in both replicates.
 
 ### Prep Genome features
-```{r}
+
+``` r
 # loading in genome features
 #gencode_gr <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2023/data/data/genomes/gencode.v32.annotation.gtf")
 
@@ -134,7 +134,8 @@ Our strategy was to take peaks in each replicate and find all overlapping peak w
 ```
 
 ### Comparing number of peaks to genome coverage
-```{r}
+
+``` r
 # create dataframe of the dbp names and the number of consensus peaks
 #num_peaks_df <- data.frame("dbp" = names(filtered_consensus_list),
                           # "num_peaks" = sapply(filtered_consensus_list, length))
@@ -152,14 +153,22 @@ ggplot(num_peaks_df,
   geom_abline(slope = 1, linetype="dashed") +
   geom_smooth(method = "lm", se=FALSE, formula = 'y ~ x',
               color = "#a8404c")
+```
 
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
 #ggsave("figures/genome_coverage.pdf", height = 50, width = 12, limitsize = F)
 ```
-### Results: 
-There is a positive linear relationship between the number of peaks for a DBP and the total genome coverage of those peaks.
+
+### Results:
+
+There is a positive linear relationship between the number of peaks for
+a DBP and the total genome coverage of those peaks.
 
 ### Distribution of promoter overlaps versus gene-bodies
-```{r}
+
+``` r
 # creating number of promoter overlaps entry
 #promoter_peak_counts <- count_peaks_per_feature(lncrna_mrna_promoters, filtered_consensus_list, type = "counts")
 
@@ -176,13 +185,25 @@ There is a positive linear relationship between the number of peaks for a DBP an
 
 # visualize distribution to compare
 hist(num_peaks_df$peaks_overlapping_promoters)
+```
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
 hist(num_peaks_df$peaks_overlapping_genebody)
 ```
-### Results: 
-The distribution of peaks overlapping promoters is different than peaks overlapping gene-bodies. The distribution of peaks overlapping promoters is bimodal with the most frequent number of promoter overlaps per DBP around 15,000. The distribution of peaks overlapping gene-bodies is right skewed, with most of the gene body overlaps per DBPs being less than 40,000. 
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+\#\#\# Results: The distribution of peaks overlapping promoters is
+different than peaks overlapping gene-bodies. The distribution of peaks
+overlapping promoters is bimodal with the most frequent number of
+promoter overlaps per DBP around 15,000. The distribution of peaks
+overlapping gene-bodies is right skewed, with most of the gene body
+overlaps per DBPs being less than 40,000.
 
 ### Super Binders
-```{r}
+
+``` r
 # Make a list of genes that are "super binders" 
 #running count_peaks_per_feature
 #promoter_peak_occurence <- count_peaks_per_feature(lncrna_mrna_promoters, filtered_consensus_list, 
@@ -208,7 +229,11 @@ geom_density(alpha = 0.2, color = "#424242", fill = "#424242") +
   ylab(expression("Density")) +
   ggtitle("Promoter binding events",
           subtitle = "mRNA and lncRNA genes") 
+```
 
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
 #ggsave("figures/Distribution_of_binding.pdf", height = 50, width = 12, limitsize = F)
 
 # add column for super binder or not
@@ -234,11 +259,23 @@ rnames <- c("mRNA","lncRNA")
 cnames <- c("Regular","Super Binder")
 matrix(data= c(rb_mr, rb_lnc,sb_mr , sb_lnc ), ncol=2, dimnames=list(rnames,cnames))
 ```
-### Results: 
-After looking at the distribution of the number of DBPs bound to a gene it was determined that any genes that have more that 200 DBPs bound are "super-binders." Out of 36,814 genes, 11,689 were found to be super-binders. Super-binding promoters are more associated with mRNA than lncRNA, which is the opposite in the normal binders. There were 9,177 mRNA superbinders and 2,512 lncRNA superbinders.  
+
+    ##        Regular Super Binder
+    ## mRNA     10788         9177
+    ## lncRNA   14337         2512
+
+### Results:
+
+After looking at the distribution of the number of DBPs bound to a gene
+it was determined that any genes that have more that 200 DBPs bound are
+“super-binders.” Out of 36,814 genes, 11,689 were found to be
+super-binders. Super-binding promoters are more associated with mRNA
+than lncRNA, which is the opposite in the normal binders. There were
+9,177 mRNA superbinders and 2,512 lncRNA superbinders.
 
 ### Transcription Factors
-```{r}
+
+``` r
 # How many of these proteins are TFs? What is the most represented type of DBD?
 # reading in TF annotations 
 #human_tfs <- readxl::read_excel("../../analysis/01_create_consensus_peaks/results/TF_annotations.xlsx",
@@ -269,14 +306,23 @@ After looking at the distribution of the number of DBPs bound to a gene it was d
 #num_peaks_df$dbd <- as.factor(num_peaks_df$dbd)
 #names(which.max(table(num_peaks_df$dbd)))
 ```
-### Results: 
-367 of the DBPs are transcription factors (85%), and the other 86 are not. The most represented type of DBD is C2H2 ZF.
+
+### Results:
+
+367 of the DBPs are transcription factors (85%), and the other 86 are
+not. The most represented type of DBD is C2H2 ZF.
 
 ### Clustering- similarity between genes
-```{r}
+
+``` r
 # start with clustering all DBPs and promoters
 bin_hier <- hclust(dist(promoter_peak_occurence, method = "binary"))
 ggdendro::ggdendrogram(bin_hier, rotate = T,  size = 3)
+```
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
 #ggsave("figures/ggdendro_plot_promoters.pdf", height = 50, width = 12, limitsize = F)
 
 # if we cluster by lncRNA and mRNA separately what are some similarities and differences?
@@ -292,16 +338,37 @@ bin_hier_lncrna <- hclust(dist(lncrna_peak_occurence, method = "binary"))
 
 # Now plot with ggdendro
 ggdendro::ggdendrogram(bin_hier_mrna, rotate = T,  size = 3)
+```
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+
+``` r
 #ggsave("figures/ggdendro_plot_mrna.pdf", height = 50, width = 12, limitsize = F)
 
 ggdendro::ggdendrogram(bin_hier_lncrna, rotate = T,  size = 3)
+```
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->
+
+``` r
 #ggsave("figures/ggdendro_plot_lncrna.pdf", height = 50, width = 12, limitsize = F)
 ```
-### Result: 
-When clustering all the DBPs binding to promoters there are many clusters of realted DBPs. An example is 2 related DBPs in the dendrogram, ZNF639 and CBFB. ZNF639 is zinc finer and CBFB is a gene for core-binding factor subunit beta. CBFB binds to one of three related RUNX proteins to form different versions of CBF. These protein complexes bind to specific regions of DNA and help activate certain genes. I hypothesize that ZNF639 is involved in this trancriptonal activation. We also clustered lncRNA and mRNA promoters separately and can see similar clusterting patterns as the overall clustering. 
+
+### Result:
+
+When clustering all the DBPs binding to promoters there are many
+clusters of realted DBPs. An example is 2 related DBPs in the
+dendrogram, ZNF639 and CBFB. ZNF639 is zinc finer and CBFB is a gene for
+core-binding factor subunit beta. CBFB binds to one of three related
+RUNX proteins to form different versions of CBF. These protein complexes
+bind to specific regions of DNA and help activate certain genes. I
+hypothesize that ZNF639 is involved in this trancriptonal activation. We
+also clustered lncRNA and mRNA promoters separately and can see similar
+clusterting patterns as the overall clustering.
 
 ### Metaplots- mRNA versus lncRNA
-```{r}
+
+``` r
 # Let's look at the metaplot for all DBPs on lncRNA and mRNA promoters seperately (hint facet wrap).
 #lncrna_metaplot_df <- data.frame(x = integer(), dens = numeric(), dbp = character())
 
@@ -341,15 +408,22 @@ ggplot(combined_metaplot_profile,
                     name = "") +
   ylab("Peak frequency") +
   scale_color_manual(values = c("#424242","#a8404c"))
-
-#ggsave("figures/promoter_metaplot.pdf")
-
 ```
-### Results: 
-The binding of DBPs on mRNA and lncRNA promoters is very similar. There are some DBPs that have different binding based on the type of promoter. 
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+#ggsave("figures/promoter_metaplot.pdf")
+```
+
+### Results:
+
+The binding of DBPs on mRNA and lncRNA promoters is very similar. There
+are some DBPs that have different binding based on the type of promoter.
 
 ### Metaplots- Super-binders versus Regular promoters
-```{r}
+
+``` r
 # Make a metaplot of DBPS only on Super-binders versus regular promoters 
 # superbinder promoters
 #super_proms <- subset(peak_occurence_df, superbinder2 == "Superbinder")
@@ -402,16 +476,24 @@ ggplot(combined_super_binder_metaplot_profile,
                      name = "") + 
   ylab("Peak frequency") +
  scale_color_manual(values = c("#424242","#a8404c"))
-
-#ggsave("figures/superbind_promoter_metaplot.pdf")
-
 ```
-### Results: 
-The binding of DBPs on super-binder and regular promoters is very similar. The super-binders appear to bind more broadly across promoters. 
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+#ggsave("figures/superbind_promoter_metaplot.pdf")
+```
+
+### Results:
+
+The binding of DBPs on super-binder and regular promoters is very
+similar. The super-binders appear to bind more broadly across promoters.
 
 ## RNAseq expression
-### DBPs bound and RNA output 
-```{r}
+
+### DBPs bound and RNA output
+
+``` r
 # What is the relationship between number of DBPS bound on a promoter versus RNA output (hint TPM)
 
 # reading in salmon tpm
@@ -447,14 +529,23 @@ geom_point(data = promoter_features_df %>% filter(tpm_homo_sapiens > 0.001),
   # labeling axes
   xlab(expression('Number of DBPs')) +
   ylab(expression(log[2](TPM)))
+```
 
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
 #ggsave("figures/expression_binding.pdf", height = 50, width = 12, limitsize = F)
 ```
-### Result: 
-There is a positive linear relationship between number of DBPs bound and expression levels. The protein coding genes appear to have higher expression than lncRNAs.
+
+### Result:
+
+There is a positive linear relationship between number of DBPs bound and
+expression levels. The protein coding genes appear to have higher
+expression than lncRNAs.
 
 ### Super-binders and expression levels
-```{r}
+
+``` r
 # If we zoom in on high binding promoters (> 200 DBPs) are there any that don't have any expression?
 #super_tpm <- merge(super_proms, tpm) # change df?
 #super_tpm2 <- merge(peak_occurence_df, super_tpm)
@@ -475,13 +566,25 @@ There is a positive linear relationship between number of DBPs bound and express
 #sup_no_peak_occurence <- promoter_peak_occurence[,sup_no_ex$gene_id]
 bin_hier_sup <- hclust(dist(sup_no_peak_occurence, method = "binary"))
 ggdendro::ggdendrogram(bin_hier_sup, rotate = T,  size = 3)
+```
+
+![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
 #ggsave("figures/ggdendro_plot_super_noexpress.pdf", height = 50, width = 12, limitsize = F)
 ```
-### Results: 
-Out of the 11689 super-binders, 657 of them have less that .1 tpm. Of these 657 super-binders with no expression, 260 bind mRNA promoters and 397 bind lncRNA promoters. These are saved in superbinder_noexp.csv. It appears there are 2 main clusters of super binders with no expression. When looking at gene ontology a majority of these genes are unclassified.
+
+### Results:
+
+Out of the 11689 super-binders, 657 of them have less that .1 tpm. Of
+these 657 super-binders with no expression, 260 bind mRNA promoters and
+397 bind lncRNA promoters. These are saved in superbinder\_noexp.csv. It
+appears there are 2 main clusters of super binders with no expression.
+When looking at gene ontology a majority of these genes are
+unclassified.
 
 ### Save Important Data
-```{r}
+
+``` r
 #save(combined_metaplot_profile, combined_super_binder_metaplot_profile, consensus_list, dbp,filtered_consensus_list, gencode_genes,gencode_gr, genebody_peak_counts, human_tfs, lncrna_gene_ids, mrna_gene_ids, lncrna_genes,lncrna_metaplot_df, lncrna_mrna_promoters, lncrna_peak_occurence, lncrna_promoters, lost_dbps,metaplot_df,metaplot_filtered_matrix,metaplot_hclust, mm_scaled,mrna_genes, mrna_lncrna_genes,mrna_metaplot_df,mrna_peak_occurence,mrna_promoters,num_peaks,num_peaks_df,peak_list,peak_occurence_df,promoter_features_df,promoter_peak_counts,promoter_peak_occurence,reg_binders,salmon_tpm,sup_no_ex, sup_no_lnc, sup_no_mrna, sup_no_peak_occurence,super_binders,super_peak_occurence, super_proms, super_tpm, super_tpm2,tmp_df,tpm,file = "results/needed_data.RData")
 ```
-
