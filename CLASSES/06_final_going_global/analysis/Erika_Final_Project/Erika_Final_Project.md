@@ -580,8 +580,6 @@ Out of the 11689 super-binders, 657 of them have less that .1 tpm. Of
 these 657 super-binders with no expression, 260 bind mRNA promoters and
 397 bind lncRNA promoters. These are saved in superbinder\_noexp.csv. It
 appears there are 2 main clusters of super binders with no expression.
-When looking at gene ontology a majority of these genes are
-unclassified.
 
 ### Save Important Data
 
