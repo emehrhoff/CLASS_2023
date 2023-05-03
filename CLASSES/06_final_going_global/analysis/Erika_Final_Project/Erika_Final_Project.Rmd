@@ -1,5 +1,5 @@
 ---
-title: "Erika_Final_Project"
+title: "Genomics Final Project"
 author: "Erika Mehrhoff"
 date: "4/24/2023"
 output: github_document
@@ -178,6 +178,7 @@ There is a positive linear relationship between the number of peaks for a DBP an
 hist(num_peaks_df$peaks_overlapping_promoters)
 hist(num_peaks_df$peaks_overlapping_genebody)
 ```
+
 ### Results: 
 The distribution of peaks overlapping promoters is different than peaks overlapping gene-bodies. The distribution of peaks overlapping promoters is bimodal with the most frequent number of promoter overlaps per DBP around 15,000. The distribution of peaks overlapping gene-bodies is right skewed, with most of the gene body overlaps per DBPs being less than 40,000. 
 

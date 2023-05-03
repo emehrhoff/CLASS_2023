@@ -1,4 +1,4 @@
-Erika\_Final\_Project
+Genomics Final Project
 ================
 Erika Mehrhoff
 4/24/2023
@@ -194,12 +194,15 @@ hist(num_peaks_df$peaks_overlapping_genebody)
 ```
 
 ![](Erika_Final_Project_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
-\#\#\# Results: The distribution of peaks overlapping promoters is
-different than peaks overlapping gene-bodies. The distribution of peaks
-overlapping promoters is bimodal with the most frequent number of
-promoter overlaps per DBP around 15,000. The distribution of peaks
-overlapping gene-bodies is right skewed, with most of the gene body
-overlaps per DBPs being less than 40,000.
+
+### Results:
+
+The distribution of peaks overlapping promoters is different than peaks
+overlapping gene-bodies. The distribution of peaks overlapping promoters
+is bimodal with the most frequent number of promoter overlaps per DBP
+around 15,000. The distribution of peaks overlapping gene-bodies is
+right skewed, with most of the gene body overlaps per DBPs being less
+than 40,000.
 
 ### Super Binders
 
